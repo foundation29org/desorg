@@ -12,6 +12,15 @@ import { catchError, debounceTime, distinctUntilChanged, map, tap, switchMap, me
 export class RaitoService {
     constructor(private authService: AuthService, private http: HttpClient) {}
 
+    getPatients(){
+      return this.http.get(environment.urlRaito+'/api/eo/patients/'+this.authService.getGroup())
+        .map( (res : any) => {
+          return res;
+         }, (err) => {
+           console.log(err);
+         })
+    }
+
     getOnlyPatients(){
       return this.http.get(environment.urlRaito+'/api/eo/onlypatients/'+this.authService.getGroup())
         .map( (res : any) => {

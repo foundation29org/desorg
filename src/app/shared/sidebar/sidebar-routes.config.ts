@@ -51,14 +51,14 @@ export const ROUTESSUPERADMIN: RouteInfo[] = [
 //Sidebar menu Routes and data
 export const ROUTESADMIN: RouteInfo[] = [
 
-    { path: '/admin/dashboard-admin', title: 'do.dashboard', icon: 'ft-home', class: '', badge: '', badgeClass: 'badge badge-pill badge-danger float-right mr-1 mt-1', isExternalLink: false, submenu: [] },
-    { path: '/admin/questionnaires', title: 'do.questionnaires', icon: 'ft-flag', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
-    { path: '/admin/community', title: 'do.community', icon: 'ft-flag', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
-    { path: '/admin/seizures', title: 'do.seizures', icon: 'ft-flag', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
-    { path: '/admin/drugs', title: 'do.drugs', icon: 'ft-flag', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
-    { path: '/admin/feels', title: 'do.quality', icon: 'ft-flag', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
-    { path: '/admin/symptoms', title: 'do.symptoms', icon: 'ft-flag', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
-    { path: '/admin/datamanagement', title: 'do.datamanagement', icon: 'ft-flag', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
+    { path: '/admin/dashboard-admin', title: 'do.dashboard', icon: 'fa fa-th-large', class: '', badge: '', badgeClass: 'badge badge-pill badge-danger float-right mr-1 mt-1', isExternalLink: false, submenu: [] },
+    { path: '/admin/questionnaires', title: 'do.questionnaires', icon: 'fa-solid fa-circle-question', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
+    { path: '/admin/community', title: 'do.community', icon: 'fa-solid fa-users', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
+    { path: '/admin/seizures', title: 'do.seizures', icon: 'fa-solid fa-bolt', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
+    { path: '/admin/drugs', title: 'do.drugs', icon: 'fa-solid fa-pills', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
+    { path: '/admin/feels', title: 'do.quality', icon: 'fa-solid fa-face-grin', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
+    { path: '/admin/symptoms', title: 'do.symptoms', icon: 'fa-solid fa-crutch', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
+    { path: '/admin/datamanagement', title: 'do.datamanagement', icon: 'fa-solid fa-server', class: '', badge: '', badgeClass: '', isExternalLink: false, submenu: [] },
 ];
 
 //Sidebar menu Routes and data
