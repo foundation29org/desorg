@@ -17,7 +17,7 @@ import { DrugsComponent } from './drugs/drugs.component';
 import { FeelsComponent } from './feels/feels.component';
 import { SymptomsComponent } from './symptoms/symptoms.component';
 import { DataManagementComponent } from './datamanagement/datamanagement.component';
-
+import {MatExpansionModule} from '@angular/material/expansion';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
@@ -30,7 +30,8 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
         TranslateModule,
         FormsModule,
         UiSwitchModule,
-        NgxDatatableModule
+        NgxDatatableModule,
+        MatExpansionModule
     ],
     exports: [TranslateModule],
     declarations: [

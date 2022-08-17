@@ -21,6 +21,15 @@ export class RaitoService {
          })
     }
 
+    getPatient(idPatient){
+      return this.http.get(environment.urlRaito+'/api/eo/patient/'+idPatient)
+        .map( (res : any) => {
+          return res;
+         }, (err) => {
+           console.log(err);
+         })
+    }
+
     getOnlyPatients(){
       return this.http.get(environment.urlRaito+'/api/eo/onlypatients/'+this.authService.getGroup())
         .map( (res : any) => {
