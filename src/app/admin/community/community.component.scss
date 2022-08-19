@@ -166,6 +166,13 @@
 :host /deep/ #exTab1 .tab-content {
   background-color: #f4f4f4;
   padding-bottom: 1rem !important;
+  
+}
+
+::ng-deep .tab-content {
+  border-bottom: 1px solid #dee2e6 !important;
+  border-left: 1px solid #dee2e6 !important;
+  border-right: 1px solid #dee2e6 !important;
 }
 
 .titleneon {
@@ -423,7 +430,7 @@ body {
   }
   tbody {
     display:block;
-    max-height:260px;
+    max-height:60vh;
     min-height:260px;
     overflow-y:auto;
   }

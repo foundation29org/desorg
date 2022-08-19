@@ -31,7 +31,7 @@ export class RaitoService {
     }
 
     getOnlyPatients(){
-      return this.http.get(environment.urlRaito+'/api/eo/onlypatients/'+this.authService.getGroup())
+      return this.http.post(environment.urlRaito+'/api/eo/onlypatients/'+this.authService.getGroup(), {meta:true})
         .map( (res : any) => {
           return res;
          }, (err) => {

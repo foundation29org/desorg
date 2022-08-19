@@ -13,6 +13,8 @@
 						<tr>
 							<th>Id</th>
 							<th>Name</th>
+							<th>Age</th>
+							<th>Country</th>
 							<th>Info</th>
 							<th>Actions</th>
 						</tr>
@@ -23,7 +25,7 @@
 								<span *ngIf="patient.result.entry[0].resource.gender=='female'" class="fa fa-2x fa-female grey mr-2"></span>
 								<span *ngIf="patient.result.entry[0].resource.gender=='male'" class="fa fa-2x fa-male grey mr-2"></span>
 								<span *ngIf="patient.result.entry[0].resource.gender!='male' && patient.result.entry[0].resource.gender!='female'" class="fa fa-2x fa-question grey mr-2"></span>
-								{{patient.patientId}}
+								<span class="text-truncate" style="width: 150px;display: inline-block;">{{patient.patientId}}</span>
 							</td>
 							<td>{{patient.result.entry[0].resource.name.given[0]}}</td>
 							<td>
@@ -33,6 +35,16 @@
 									<span *ngIf="patient.result.entry[0].resource.age.months==0 && patient.result.entry[0].resource.age.years==0">0 {{'topnavbar.months' | translate }}</span>
 								</span>
 								<span *ngIf="patient.result.entry[0].resource.age==null">-</span>
+							</td>
+							<td>{{patient.result.entry[0].resource.address[0].country}} </td>
+							<td>
+								<span>Drugs: {{patient.metaInfo.drugs}} </span>
+								<span class="d-block">Phenotypes: {{patient.metaInfo.phenotypes}} </span>
+								<span class="d-block">Feels: {{patient.metaInfo.feels}} </span>
+								<span class="d-block">Proms: {{patient.metaInfo.proms}} </span>
+								<span class="d-block">Sizures: {{patient.metaInfo.seizures}} </span>
+								<span class="d-block">Weight: {{patient.metaInfo.weight}} </span>
+								<span class="d-block">Height: {{patient.metaInfo.height}} </span>
 							</td>
 							<td>
 								<span class="mt-1 nav-item" ngbDropdown display="dynamic" placement="bottom-right">
@@ -70,7 +82,7 @@
 	  <div>
 		<h4 class="mb-0">
 			Patient
-			<span class="font-small-3 mute d-block">{{actualPatient.resume.resource.id}}</span>
+			<span class="font-small-3 mute d-block text-break">{{actualPatient.resume.resource.id}}</span>
 		</h4>
 	  </div>
 	</div>
@@ -90,8 +102,14 @@
 						  </mat-panel-title>
 						</mat-expansion-panel-header>
 						<div class="p-3 m-3 border rounded" style="background-color: #A1CBEA !important;">
-						  <p class="ml-2 mr-2">{{actualPatient.resume.resource|json}}</p>
-						  <p class="ml-2 mr-2">{{actualPatient.condition.resource|json}}</p>
+						  <!--<p class="ml-2 mr-2">{{actualPatient.resume.resource|json}}</p>-->
+						  <p class="ml-2 mr-2 text-break">Patient: {{actualPatient.resume.resource.id}}</p>
+						  <p class="ml-2 mr-2">Name: {{actualPatient.resume.resource.name.given[0]}}</p>
+						  <p class="ml-2 mr-2">Gender: {{actualPatient.resume.resource.gender}}</p>
+						  <p class="ml-2 mr-2">BirthDate: {{actualPatient.resume.resource.birthDate |date}}</p>
+						  <p class="ml-2 mr-2">Country: {{actualPatient.resume.resource.address[0].country }}</p>
+						  <p class="ml-2 mr-2">Condition: {{actualPatient.condition.resource.code.text }}</p>
+						  <!--<p class="ml-2 mr-2">{{actualPatient.condition.resource|json}}</p>-->
 						</div>
 						<div class="card-body">
 						</div>
@@ -220,7 +238,7 @@
 									</thead>
 									<tbody>
 										<tr *ngFor="let element of actualPatient.questionnaires ; let i = index">
-											<td>{{element.resource.id}}</td>
+											<td class="text-break">{{element.resource.id}}</td>
 											<td>
 												<p *ngFor="let item of element.resource.item ; let j = index">
 													{{item.answer[0].valueString}}
@@ -237,9 +255,20 @@
 					  <ngb-tab id="tab0">
 						<ng-template ngbTabTitle><strong>Resumen</strong></ng-template>
 						<ng-template ngbTabContent>
-						  <div class="p-3 m-3 border rounded text-center" style="background-color: #A1CBEA !important;">
-							<p class="ml-2 mr-2">{{actualPatient.resume.resource|json}}</p>
-							<p class="ml-2 mr-2">{{actualPatient.condition.resource|json}}</p>
+						  <div class="p-3 m-3 border rounded" style="background-color: #A1CBEA !important;">
+							<!--<p class="ml-2 mr-2">{{actualPatient.resume.resource|json}}</p>-->
+							<p class="ml-2 mr-2 text-break">Patient: {{actualPatient.resume.resource.id}}</p>
+							<p class="ml-2 mr-2">Name: {{actualPatient.resume.resource.name.given[0]}}</p>
+							<p class="ml-2 mr-2">Gender: {{actualPatient.resume.resource.gender}}</p>
+							<p class="ml-2 mr-2">BirthDate: {{actualPatient.resume.resource.birthDate |date}} (<span *ngIf="actualPatient.resume.resource.age!=null">
+								<span *ngIf="actualPatient.resume.resource.age.years>0">{{actualPatient.resume.resource.age.years}} {{'topnavbar.year' | translate }}<span *ngIf="actualPatient.resume.resource.age.years>1">s</span> <span *ngIf="actualPatient.resume.resource.age.months>0">, </span></span>
+								<span *ngIf="actualPatient.resume.resource.age.months>0">{{actualPatient.resume.resource.age.months}} <span *ngIf="actualPatient.resume.resource.age.months<=1">{{'topnavbar.month' | translate }}</span><span *ngIf="actualPatient.resume.resource.age.months>1">{{'topnavbar.months' | translate }}</span></span>
+								<span *ngIf="actualPatient.resume.resource.age.months==0 && actualPatient.resume.resource.age.years==0">0 {{'topnavbar.months' | translate }}</span>
+							</span>
+							<span *ngIf="actualPatient.resume.resource.age==null">-</span>)</p>
+							<p class="ml-2 mr-2">Country: {{actualPatient.resume.resource.address[0].country }}</p>
+							<p class="ml-2 mr-2">Condition: {{actualPatient.condition.resource.code.text }}</p>
+							<!--<p class="ml-2 mr-2">{{actualPatient.condition.resource|json}}</p>-->
 						  </div>
 						  <div class="col-md-12 pb-2">
 							<div class="row">
@@ -386,7 +415,7 @@
 										</thead>
 										<tbody>
 											<tr *ngFor="let element of actualPatient.questionnaires ; let i = index">
-												<td>{{element.resource.id}}</td>
+												<td class="text-break">{{element.resource.id}}</td>
 												<td>
 													<p *ngFor="let item of element.resource.item ; let j = index">
 														{{item.answer[0].valueString}}

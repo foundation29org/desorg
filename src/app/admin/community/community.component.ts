@@ -36,16 +36,12 @@ export class CommunityComponent implements OnInit, OnDestroy{
         this.patients = data;
 
         for (var index in this.patients) {
-          console.log(this.patients[index].result.entry[0].resource.birthDate);
-          if(this.patients[index].result.entry[0].resource.birthDate){
+          if(this.patients[index].result.entry[0].resource.birthDate !=null){
             this.patients[index].result.entry[0].resource.age = this.ageFromDateOfBirthday(this.patients[index].result.entry[0].resource.birthDate);
-            console.log(this.patients[index].result.entry[0].resource.age);
-            //var dateRequest2=new Date(this.selectedPatient.birthDate);
           }else{
             this.patients[index].result.entry[0].resource.age = null;
           }
         }
-
         this.loadedUsers = true;
       }
     ));
@@ -104,6 +100,9 @@ export class CommunityComponent implements OnInit, OnDestroy{
         console.log(res.result.entry[index].resource.resourceType);
         if(res.result.entry[index].resource.resourceType=='Patient'){
           this.actualPatient.resume = res.result.entry[index];
+          if(this.actualPatient.resume.resource.birthDate !=null){
+            this.actualPatient.resume.resource.age = this.ageFromDateOfBirthday(this.actualPatient.resume.resource.birthDate);
+          }
         }
         if(res.result.entry[index].resource.resourceType=='Condition'){
           this.actualPatient.condition = res.result.entry[index];
