@@ -102,4 +102,14 @@ export class RaitoService {
          })
     }
 
+
+    getQuestionnairesGroup(){
+      return this.http.get(environment.urlRaito+'/api/group/questionnaires/'+this.authService.getGroup())
+        .map( (res : any) => {
+          return res;
+         }, (err) => {
+           console.log(err);
+         })
+    }
+
 }

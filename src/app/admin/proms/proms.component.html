@@ -5,7 +5,13 @@
 	<div class="col-xl-8 col-lg-12 col-12" *ngIf="loadedData">
 		<div class="card">
 			<div class="card-header">
-				<h4 class="card-title">{{'do.questionnaires' | translate }}</h4>
+				<h4 class="card-title">{{'do.questionnaires' | translate }}
+					<span class="d-block">
+						<span *ngFor="let questionnaire of questionnaires ; let i = index" class="font-small-3 text-muted">{{questionnaire.id}} 
+							<span *ngIf="questionnaires.length>0 && (i>0) && (i<=questionnaires.length-1)">,</span>
+						</span>
+					</span>
+				</h4>
 			</div>
 			<div class="card-body table-responsive">
 				<table class="table text-center">
@@ -20,6 +26,7 @@
 							<td>{{element.resource.id}}</td>
 							<td>
 								<p *ngFor="let item of element.resource.item ; let j = index">
+									<span class="d-block"><strong>{{item.text}}</strong></span>
 									{{item.answer[0].valueString}}
 								</p>
 							</td>

@@ -123,7 +123,7 @@ export class CommunityComponent implements OnInit, OnDestroy{
           if(res.result.entry[index].resource.code.text=='Feel'){
             this.actualPatient.feels.push(res.result.entry[index]);
           }
-          if(res.result.entry[index].resource.code.text=='Body weight'){
+          if(res.result.entry[index].resource.code.text=='Weight'){
             this.actualPatient.weights.push(res.result.entry[index]);
           }
           if(res.result.entry[index].resource.code.text=='Body height'){

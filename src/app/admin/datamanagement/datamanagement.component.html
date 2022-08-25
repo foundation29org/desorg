@@ -16,7 +16,16 @@
 							</div>
 						</div>
 					</div>
-
+					<div class="card">
+						<div class="card-body center-elements">
+							<span class="d-block mb-3">You also can download de CSV file</span>
+							<button class="btn btn-info" type="button" [disabled]="loadedData" (click)="extractCSV()">Download CSV</button>
+							<div class="d-none"><span id="content2"></span></div>
+							<div *ngIf="loadedData2" class="center-elements">
+								<i class="fa fa-spinner fa-spin fa-3x fa-fw pink"></i>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

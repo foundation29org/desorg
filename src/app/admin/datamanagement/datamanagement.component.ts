@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RaitoService } from 'app/shared/services/raito.service';
 import { Subscription } from 'rxjs/Subscription';
 import { DateService } from 'app/shared/services/date.service';
+import { json2csv } from 'json-2-csv';
 
 @Component({
     selector: 'app-datamanagement',
@@ -15,6 +16,7 @@ export class DataManagementComponent implements OnInit{
 
   data: any = [];
   loadedData: boolean = false;
+  loadedData2: boolean = false;
   private subscription: Subscription = new Subscription();
   private msgDownload: string;
 
@@ -56,6 +58,83 @@ export class DataManagementComponent implements OnInit{
        console.log(err);
        this.loadedData = false;
      }));
+  }
+
+  extractCSV(){
+    this.loadedData2 = true;
+    this.subscription.add( this.raitoService.getPatients()
+    .subscribe( (res : any) => {
+      console.log(res);
+      var tempRes = JSON.parse(JSON.stringify(res));
+      this.loadedData2 = false;
+      var patients = [];
+      for(var i=0;i<tempRes.length;i++){
+        var entries = [];
+        for(var j=0;j<tempRes[i].result.entry.length;j++){
+          if(tempRes[i].result.entry[j].resource.resourceType=='Patient'){
+            patients.push({patientId:tempRes[i].patientId,resourceType:tempRes[i].result.entry[j].resource.resourceType, name:tempRes[i].result.entry[j].resource.name.given[0], gender: tempRes[i].result.entry[j].resource.gender, birthDate: tempRes[i].result.entry[j].resource.birthDate})
+          }
+          if(tempRes[i].result.entry[j].resource.resourceType=='Condition'){
+            patients.push({patientId:tempRes[i].patientId,resourceType:tempRes[i].result.entry[j].resource.resourceType, value:tempRes[i].result.entry[j].resource.code.text})
+          }
+          if(tempRes[i].result.entry[j].resource.resourceType=='MedicationStatement'){
+            patients.push({patientId:tempRes[i].patientId,resourceType:tempRes[i].result.entry[j].resource.resourceType, value:tempRes[i].result.entry[j].resource.contained[0].code.coding[0].display,dosage:tempRes[i].result.entry[j].resource.dosage[0].text+' mg/day', start: tempRes[i].result.entry[j].resource.effectivePeriod.start, end: tempRes[i].result.entry[j].resource.effectivePeriod.end})
+          }
+          if(tempRes[i].result.entry[j].resource.resourceType=='Observation'){
+            if(tempRes[i].result.entry[j].resource.code.text=='Phenotype'){
+              patients.push({patientId:tempRes[i].patientId,resourceType:tempRes[i].result.entry[j].resource.resourceType, category:tempRes[i].result.entry[j].resource.code.text, value:tempRes[i].result.entry[j].resource.valueString, date: tempRes[i].result.entry[j].resource.effectiveDateTime})
+            }
+            if(tempRes[i].result.entry[j].resource.code.text=='Feel'){
+              patients.push({patientId:tempRes[i].patientId,resourceType:tempRes[i].result.entry[j].resource.resourceType, category:tempRes[i].result.entry[j].resource.code.text, value:tempRes[i].result.entry[j].resource.valueQuantity.value+' AVG', date: tempRes[i].result.entry[j].resource.effectiveDateTime, note:tempRes[i].result.entry[j].resource.note})
+            }
+            if(tempRes[i].result.entry[j].resource.code.text.indexOf('Seizure - ')!=-1){
+              patients.push({patientId:tempRes[i].patientId,resourceType:tempRes[i].result.entry[j].resource.resourceType, category:tempRes[i].result.entry[j].resource.code.text, value:tempRes[i].result.entry[j].resource.valueQuantity.value+' Seconds', date: tempRes[i].result.entry[j].resource.effectiveDateTime, note:tempRes[i].result.entry[j].resource.note})
+            }
+            if(tempRes[i].result.entry[j].resource.code.text=='Weight'){
+              patients.push({patientId:tempRes[i].patientId,resourceType:tempRes[i].result.entry[j].resource.resourceType, category:tempRes[i].result.entry[j].resource.code.text, value:tempRes[i].result.entry[j].resource.valueQuantity.value+' kg', date: tempRes[i].result.entry[j].resource.effectiveDateTime})
+            }
+            if(tempRes[i].result.entry[j].resource.code.text=='Body height'){
+              patients.push({patientId:tempRes[i].patientId,resourceType:tempRes[i].result.entry[j].resource.resourceType, category:tempRes[i].result.entry[j].resource.code.text, value:tempRes[i].result.entry[j].resource.valueQuantity.value+' cm', date: tempRes[i].result.entry[j].resource.effectiveDateTime})
+            }
+          }
+          if(tempRes[i].result.entry[j].resource.resourceType=='QuestionnaireResponse'){
+            patients.push({patientId:tempRes[i].patientId,resourceType:tempRes[i].result.entry[j].resource.resourceType, id:tempRes[i].result.entry[j].resource.id, value:JSON.stringify(tempRes[i].result.entry[j].resource.item)})
+          }
+          //entries.push({resourceType:tempRes[i].result.entry[j].resource.resourceType, info: JSON.stringify(tempRes[i].result.entry[j].resource)})
+        }
+        //patients.push({patientId:tempRes[i].patientId, resources:entries})
+      }
+      this.createFile(patients);
+      
+     }, (err) => {
+       console.log(err);
+       this.loadedData2 = false;
+     }));
+  }
+
+  createFile(res){
+    let json2csvCallback = function (err, csv) {
+      if (err) throw err;
+      var blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
+    var url  = URL.createObjectURL(blob);
+    var p = document.createElement('p');
+    document.getElementById('content2').appendChild(p);
+
+    var a = document.createElement('a');
+    var dateNow = new Date();
+    var stringDateNow = this.dateService.transformDate(dateNow);
+    a.download    = "reliefukraine_"+stringDateNow+".csv";
+    a.href        = url;
+    a.textContent = "reliefukraine_"+stringDateNow+".csv";
+    a.setAttribute("id", "download")
+
+    document.getElementById('content2').appendChild(a);
+    document.getElementById("download").click();
+  }.bind(this);
+
+  var options ={'expandArrayObjects' :true, "delimiter": { 'field': ';' }, excelBOM: true}
+  json2csv(res, json2csvCallback, options);
+
   }
 
 }
