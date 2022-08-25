@@ -11,13 +11,22 @@
 				<table class="table text-center">
 					<thead>
 						<tr>
+							<th>Name</th>
 							<th>Value</th>
 							<th>Date</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr *ngFor="let element of data ; let i = index">
-							<td>{{element.resource.valueString}}</td>
+							<td>{{element.resource.name}}</td>
+							<td>
+								<span>
+									<a
+									href="https://hpo.jax.org/app/browse/term/{{element.resource.valueString}}" target="_blank"
+									title=" {{element.resource.name}} ({{element.resource.valueString}}):">{{element.resource.valueString}} 
+									<i class="ft-external-link"></i></a>
+								</span>
+							</td>
 							<td>{{element.resource.effectiveDateTime |date}}</td>
 						</tr>
 					</tbody>

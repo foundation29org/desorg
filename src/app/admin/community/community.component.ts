@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { RaitoService } from 'app/shared/services/raito.service';
 import { DateService } from 'app/shared/services/date.service';
+import { Apif29BioService } from 'app/shared/services/api-f29bio.service';
 import { NgbModal, NgbModalRef, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import {Observable, of, OperatorFunction} from 'rxjs';
 import 'rxjs/add/observable/of';
@@ -12,7 +13,7 @@ import { Subscription } from 'rxjs/Subscription';
     selector: 'app-community',
     templateUrl: './community.component.html',
     styleUrls: ['./community.component.scss'],
-    providers: [RaitoService]
+    providers: [RaitoService, Apif29BioService]
 })
 
 export class CommunityComponent implements OnInit, OnDestroy{
@@ -24,13 +25,16 @@ export class CommunityComponent implements OnInit, OnDestroy{
   actualPatient: any= [];
   step = 0;
   showButtonScroll: boolean = false;
+  lang: string = 'en';
   private subscription: Subscription = new Subscription();
   private eventSubscription: Subscription = new Subscription();
-  constructor(public translate: TranslateService, private raitoService: RaitoService, private dateService: DateService, private modalService: NgbModal){
+  constructor(public translate: TranslateService, private raitoService: RaitoService, private dateService: DateService, private modalService: NgbModal, private apif29BioService: Apif29BioService){
 
   }
 
   ngOnInit() {
+    this.lang = sessionStorage.getItem('lang');
+
     this.subscription.add(this.raitoService.getOnlyPatients().subscribe(
       data => {
         this.patients = data;
@@ -132,6 +136,11 @@ export class CommunityComponent implements OnInit, OnDestroy{
         }
         
       }
+
+      if(this.actualPatient.phenotypes.length>0){
+        this.getHpoCodes();
+      }
+
       console.log(this.actualPatient);
       //this.actualPatient = res;
       if(this.modalReference!=undefined){
@@ -148,6 +157,41 @@ export class CommunityComponent implements OnInit, OnDestroy{
        console.log(err);
        this.loading = false;
      }));
+  }
+
+  getHpoCodes(){
+    var hposStrins = [];
+
+    for(var i=0;i<this.actualPatient.phenotypes.length;i++){
+      hposStrins.push(this.actualPatient.phenotypes[i].resource.valueString);
+    }
+
+    if (hposStrins.length >0) {
+      this.callGetInfoSymptoms(hposStrins);
+    }
+  }
+  
+  callGetInfoSymptoms(hposStrins) {
+    var lang = this.lang;
+    this.subscription.add(this.apif29BioService.getInfoOfSymptoms(lang, hposStrins)
+        .subscribe((res: any) => {
+            var tamano = Object.keys(res).length;
+            if (tamano > 0) {
+                for (var i in res) {
+                    for (var j = 0; j < this.actualPatient.phenotypes.length; j++) {
+                        if (res[i].id == this.actualPatient.phenotypes[j].resource.valueString) {
+                          this.actualPatient.phenotypes[j].resource.name = res[i].name;
+                          this.actualPatient.phenotypes[j].resource.def = res[i].desc;
+                          this.actualPatient.phenotypes[j].resource.synonyms = res[i].synonyms;
+                          this.actualPatient.phenotypes[j].resource.comment = res[i].comment;
+                        }
+                    }
+                }
+                //this.temporalSymptoms.sort(this.sortService.GetSortOrder("name"));
+            }
+        }, (err) => {
+            console.log(err);
+        }));
   }
 
   closeModal() {
