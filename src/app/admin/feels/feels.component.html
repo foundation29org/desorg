@@ -2,7 +2,53 @@
     <div  class="col-md-12 center-elements mt-3" *ngIf="!loadedData">
         <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
       </div>
-	<div class="col-xl-8 col-lg-12 col-12" *ngIf="loadedData">
+	<div class="col-xl-8 col-lg-12 col-12 mt-3" *ngIf="loadedData">
+		Total Patients: {{totalPatients}}
+		<p class="mb-0 mt-3">
+			<mat-checkbox [(ngModel)]="allSelected" (change)="allChanged()">Select/Deselect All</mat-checkbox>
+		</p>
+		<mat-select class="form-control" id="choiseset" name="choiseset" multiple [(ngModel)]="countriesSelected" (selectionChange)="countriesChanged()">
+			<mat-option *ngFor="let country of countries" value="{{country.name}}">{{country.name}} ({{country.count}} patients)</mat-option>
+		</mat-select>
+		<div class="row mb-3">
+            <div class="col-sm-12 content-header">
+                <span class="optionsCharts">
+                    <span><button class="mb-0 btn btn-sm btn-white round mr-1" [disabled]="rangeDate=='month'"
+                            (click)="loadDataRangeDate('month');">{{'charts.Last month' |
+                            translate }}</button></span>
+                    <span><button class="mb-0 btn btn-sm btn-white round mr-1" [disabled]="rangeDate=='quarter'"
+                            (click)="loadDataRangeDate('quarter');">{{'charts.Last quarter' |
+                            translate }}</button></span>
+                    <span><button class="mb-0 btn btn-sm btn-white round mr-1" [disabled]="rangeDate=='year'"
+                            (click)="loadDataRangeDate('year');">{{'charts.Last year' |
+                            translate }}</button></span>
+					<span><button class="mb-0 btn btn-sm btn-white round mr-1" [disabled]="rangeDate=='all'"
+						(click)="loadDataRangeDate('all');">All</button></span>
+                </span>
+            </div>
+        </div>
+		<div class="height-200 pt-3">
+			<ngx-charts-line-chart
+				[scheme]="lineChartColorScheme"
+				[results]="lineChart" [gradient]="barChartGradient"
+				[xAxis]="false" [yAxis]="true" [yAxisTickFormatting]='axisFormat'
+				[legend]="false" [legendPosition]="'below'" [showXAxisLabel]="false"
+				[showYAxisLabel]="false" [xAxisLabel]="barChartXAxisLabel"
+				[yAxisLabel]="barChartYAxisLabel" [yAxisTicks]="yAxisTicksDrugs">
+				<!--[timeline]="true"-->
+			</ngx-charts-line-chart> 
+		</div>
+		<div *ngIf="rangeDate=='month'" class="center-elements col-12">
+			<span class="float-left font-small-3">{{xAxisTicks[0] | date: 'dd MMM': '' : translate.currentLang}}</span>
+			<span class="d-none d-sm-inline font-small-3">{{xAxisTicks[1] | date: 'dd MMM': '' : translate.currentLang}}</span>
+			<span class="float-right font-small-3">{{xAxisTicks[2] | date: 'dd MMM': '' : translate.currentLang}}</span>
+		</div>
+		<div *ngIf="rangeDate!='month'" class="center-elements col-12">
+			<span class="float-left font-small-3">{{xAxisTicks[0] | date: 'MMM y': '' : translate.currentLang}}</span>
+			<span class="d-none d-sm-inline font-small-3">{{xAxisTicks[1] | date: 'MMM y': '' : translate.currentLang}}</span>
+			<span class="float-right font-small-3">{{xAxisTicks[2] | date: 'MMM y': '' : translate.currentLang}}</span>
+		</div>
+		<!--
 		<div class="card">
 			<div class="card-header">
 				<h4 class="card-title">{{'do.quality' | translate }}</h4>
@@ -13,16 +59,19 @@
 						<tr>
 							<th>Value</th>
 							<th>Date</th>
+							<th>Country</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr *ngFor="let element of data ; let i = index">
 							<td>{{element.resource.valueQuantity.value}}</td>
 							<td>{{element.resource.effectiveDateTime |date}}</td>
+							<td>{{element.resource.country}}</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
+	-->
 	</div>
 </div>
