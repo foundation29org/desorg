@@ -1322,17 +1322,17 @@ loadTranslationsElements() {
                   //get symtoms
                   var phenotype2 = await this.callGetInfoTempSymptomsJSON(hposStrins, phenotype);
                   this.jsPDFService.generateResultsPDF(phenotype2, infoDrugs, this.lang, images, this.rangeDate, this.timeformat, seizuresMonths)
-                  this.loadingPDF = true;
+                  this.loadingPDF = false;
                   Swal.close();
                   //phenotype = this.callGetInfoTempSymptomsJSON(hposStrins, phenotype);
               }else{
                 this.jsPDFService.generateResultsPDF(phenotype, infoDrugs, this.lang, images, this.rangeDate, this.timeformat, seizuresMonths)
-                this.loadingPDF = true;
+                this.loadingPDF = false;
                 Swal.close();
               }
             }else{
               this.jsPDFService.generateResultsPDF(phenotype, infoDrugs, this.lang, images, this.rangeDate, this.timeformat, seizuresMonths)
-              this.loadingPDF = true;
+              this.loadingPDF = false;
               Swal.close();
             }
             
