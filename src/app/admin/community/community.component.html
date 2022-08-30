@@ -53,11 +53,11 @@
 									  <i class="mt-1 fas fa-ellipsis-v font-medium-3 secondary"></i>
 									</a>
 									<div ngbDropdownMenu aria-labelledby="dropdownPat{{i}}" class="dropdown">
-									  <a class="dropdown-item py-1" href="javascript:;" (click)="viewPatient(patient.patientId, contentModalPatient)">
+									  <!--<a class="dropdown-item py-1" href="javascript:;" (click)="viewPatient(patient.patientId, contentModalPatient)">
 										<span class="">{{'generics.View' | translate }} opt 1</span>
-									  </a>
+									  </a>-->
 									  <a class="dropdown-item py-1" href="javascript:;" (click)="viewPatient2(patient.patientId, pdfPanel)">
-										<span class="">{{'generics.View' | translate }} opt 2</span>
+										<span class="">{{'generics.View' | translate }}</span>
 									  </a>
 									  <a class="dropdown-item py-1" href="javascript:;" [disabled]="loading" (click)="download(patient.patientId)">
 										<span class="">{{'generics.Download' | translate }}</span>
@@ -597,7 +597,7 @@
 										</div>
 										<div id="line-chart2">
 										  <div class="height-100">
-											<ngx-charts-bar-vertical-2d [scheme]="lineChartColorScheme"
+											<ngx-charts-line-chart [scheme]="lineChartColorScheme"
 												[results]="lineChartHeight" [gradient]="barChartGradient"
 												[xAxis]="false" [yAxis]="true"
 												[legend]="barChartShowLegend"
@@ -633,7 +633,17 @@
 															}}</span>
 													</div>
 												</ng-template>
-											</ngx-charts-bar-vertical-2d>
+											</ngx-charts-line-chart>
+											<div *ngIf="rangeDate=='month'" class="center-elements col-12">
+												<span class="float-left font-small-3">{{xAxisTicks[0] | date: 'dd MMM': '' : translate.currentLang}}</span>
+												<span class="d-none d-sm-inline font-small-3">{{xAxisTicks[1] | date: 'dd MMM': '' : translate.currentLang}}</span>
+												<span class="float-right font-small-3">{{xAxisTicks[2] | date: 'dd MMM': '' : translate.currentLang}}</span>
+											</div>
+											<div *ngIf="rangeDate!='month'" class="center-elements col-12">
+												<span class="float-left font-small-3">{{xAxisTicks[0] | date: 'MMM y': '' : translate.currentLang}}</span>
+												<span class="d-none d-sm-inline font-small-3">{{xAxisTicks[1] | date: 'MMM y': '' : translate.currentLang}}</span>
+												<span class="float-right font-small-3">{{xAxisTicks[2] | date: 'MMM y': '' : translate.currentLang}}</span>
+											</div>
 										</div>
 										</div>
 										
@@ -669,7 +679,7 @@
 					</div>
 					<div class="row" *ngIf="medications.length > 0 && loadedDrugs">
 						<div class="col-sm-12">
-							<div class="card mt-3 mb-2" #ContainerRef id="line-chart3">
+							<div class="card mt-3 mb-2" id="line-chart3">
 								<div class="mb-2">
 								  <div class="card-block" [ngClass]="(generatingPDF)?'m-0':'m-0'">
 									<div class="row p-2" *ngIf="!loadingPDF">

@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RaitoService } from 'app/shared/services/raito.service';
 import { SearchService } from 'app/shared/services/search.service';
 import { SortService } from 'app/shared/services/sort.service';
+import * as chartsData from 'app/shared/configs/general-charts.config';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -42,6 +43,7 @@ export class DrugsComponent implements OnInit, OnDestroy{
   numberPatients: any = [];
   totalDrugs2:number = 0;
   numberPatients2: any = [];
+  lineChartColorScheme = chartsData.lineChartOneColorScheme;
   private subscription: Subscription = new Subscription();
 
   constructor(public translate: TranslateService, private raitoService: RaitoService, private searchService: SearchService, private sortService: SortService){

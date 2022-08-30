@@ -38,6 +38,7 @@ export class SymptomsComponent implements OnInit, OnDestroy{
   showLegend: boolean = true;
   showXAxisLabel: boolean = true;
   showYAxisLabel: boolean = false;
+  lineChartColorScheme = chartsData.lineChartOneColorScheme;
   private subscription: Subscription = new Subscription();
 
   constructor(public translate: TranslateService, private raitoService: RaitoService, private apif29BioService: Apif29BioService, private searchService: SearchService, private sortService: SortService){
