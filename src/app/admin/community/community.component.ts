@@ -146,6 +146,7 @@ comboBarScheme = {
 };
 showRightYAxisLabel: boolean = true;
 generatingPDF: boolean = false;
+loadingPDF: boolean = false;
 
 exportOptions: any = {
   seizures:false,
@@ -157,7 +158,6 @@ public colors: ColorHelper;
 public colors2: ColorHelper;
 age: number = null;
 weight: string;
-generateUrlQr = '';
   
   constructor(public translate: TranslateService, private raitoService: RaitoService, private dateService: DateService, private modalService: NgbModal, private apif29BioService: Apif29BioService, private adapter: DateAdapter<any>, private sortService: SortService,  private searchService: SearchService, public jsPDFService: jsPDFService, private apiDx29ServerService: ApiDx29ServerService){
 
@@ -332,6 +332,19 @@ generateUrlQr = '';
     }
   }
 
+  reset(){
+    this.generatingPDF = false;
+    this.rangeDate = 'month'
+    this.selectedPatient = [];
+    this.feels = [];
+    this.lineChartHeight = []
+    this.events = [];
+    this.lineChartSeizures = [];
+    this.lineChartDrugs = [];
+    this.lineChartDrugsCopy = [];
+    this.medications = [];
+  }
+
   download(patientId){
     this.loading = true;
     this.subscription.add( this.raitoService.getPatient(patientId)
@@ -372,6 +385,7 @@ generateUrlQr = '';
     if (this.modalProfileReference != undefined) {
       this.modalProfileReference.close();
       this.modalProfileReference = undefined;
+      this.reset();
     }
   }
 
@@ -1235,6 +1249,17 @@ loadTranslationsElements() {
     }
   }
 
+  normalizedChanged2(normalized){
+    this.normalized2 = normalized;
+    if(this.normalized2){
+      this.titleDrugsVsDrugs = this.titleDrugsVsNormalized;
+    }else{
+      this.titleDrugsVsDrugs = this.titleDrugsVsNoNormalized;
+    }
+     this.getDataNormalizedDrugsVsSeizures();
+    
+  }
+
   exportPDF2(){
     Swal.fire({
       title: this.translate.instant("generics.Please wait"),
@@ -1246,7 +1271,7 @@ loadTranslationsElements() {
   
     });
   
-    this.generatingPDF = true;
+    this.loadingPDF = true;
     var seizuresMonths = [];
     if((this.rangeDate == 'quarter' || this.rangeDate == 'year') && this.events.length > 0){
       seizuresMonths = this.getSeizuresMonths();
@@ -1257,9 +1282,8 @@ loadTranslationsElements() {
     
   
     setTimeout(async function () {
-      var images= {"qrcodeimg":{show:false, info:null}, "img1":{show:false, info:null}, "img2":{show:false, info:null}, "img3":{show:false, info:null, normalized: this.normalized}, "img4":{show:false, info:null, normalized: this.normalized2}};
-      
-      images.qrcodeimg.info = await this.getImg('#qrcodeimg');
+      var images= {"img1":{show:false, info:null}, "img2":{show:false, info:null}, "img3":{show:false, info:null, normalized: this.normalized}, "img4":{show:false, info:null, normalized: this.normalized2}};
+    
   
       if(this.events.length > 0 && this.loadedEvents){
         images.img1.info = await this.getImg('#line-chart1');
@@ -1298,17 +1322,17 @@ loadTranslationsElements() {
                   //get symtoms
                   var phenotype2 = await this.callGetInfoTempSymptomsJSON(hposStrins, phenotype);
                   this.jsPDFService.generateResultsPDF(phenotype2, infoDrugs, this.lang, images, this.rangeDate, this.timeformat, seizuresMonths)
-                  this.generatingPDF = false;
+                  this.loadingPDF = true;
                   Swal.close();
                   //phenotype = this.callGetInfoTempSymptomsJSON(hposStrins, phenotype);
               }else{
                 this.jsPDFService.generateResultsPDF(phenotype, infoDrugs, this.lang, images, this.rangeDate, this.timeformat, seizuresMonths)
-                this.generatingPDF = false;
+                this.loadingPDF = true;
                 Swal.close();
               }
             }else{
               this.jsPDFService.generateResultsPDF(phenotype, infoDrugs, this.lang, images, this.rangeDate, this.timeformat, seizuresMonths)
-              this.generatingPDF = false;
+              this.loadingPDF = true;
               Swal.close();
             }
             

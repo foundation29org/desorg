@@ -99,7 +99,7 @@ export class DrugsComponent implements OnInit, OnDestroy{
               this.countriesSelected.push(this.countries[indexCountry].name);
             }
             this.getDataGraphActual();
-            this.getDataGraphOld();
+            //this.getDataGraphOld();
           }
         ));
   }
@@ -137,7 +137,7 @@ export class DrugsComponent implements OnInit, OnDestroy{
       }
     }
     this.getDataGraphActual();
-    this.getDataGraphOld();
+    //this.getDataGraphOld();
     this.loadedData=true;
   }
 

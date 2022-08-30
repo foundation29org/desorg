@@ -888,7 +888,7 @@ export class jsPDFService {
         /*var img_qr = new Image();
         img_qr.src = "assets/img/elements/qr.png"
         doc.addImage(img_qr, 'png', 160, 5, 32, 30);*/
-        doc.addImage(images.qrcodeimg.info.data,'jpeg',160, 5, 32, 32);
+        //doc.addImage(images.qrcodeimg.info.data,'jpeg',160, 5, 32, 32);
 
         this.newHeatherAndFooter(doc);
 
@@ -1056,6 +1056,7 @@ export class jsPDFService {
 
         //Diseases
         if(infoDrugs.length>0){
+            lineText = this.checkIfNewPage(doc, lineText+=10);
             this.newSectionDoc(doc,this.translate.instant("clinicalinfo.Drugs"),'',null,lineText += 10)
             this.writeHeaderText(doc, 10, lineText += 7, this.translate.instant("generics.Name"));
             this.writeHeaderText(doc, 80, lineText, this.translate.instant("medication.Dose mg"));
@@ -1077,7 +1078,13 @@ export class jsPDFService {
 
 
         if(seizuresMonths.length>0){
+            lineText = this.checkIfNewPage(doc, lineText+=10);
             this.newSectionDoc(doc,this.translate.instant("menu.Seizures"),'',null,lineText += 10)
+            /*doc.setFont(undefined, 'bold');
+            doc.setFontSize(10);
+            doc.text(this.translate.instant("generics.Date"), 10, lineText += 7);
+            doc.text(this.translate.instant("pdf.Amount"), 35, lineText);
+            doc.text(this.translate.instant("pdf.Amount"), 35, lineText);*/
             this.writeHeaderText(doc, 10, lineText += 7, this.translate.instant("generics.Date"));
             this.writeHeaderText(doc, 35, lineText, this.translate.instant("pdf.Amount"));
             this.writeHeaderText(doc, 70, lineText, this.translate.instant("generics.Date"));

@@ -1053,7 +1053,7 @@
     "grap4.1": "El siguiente gráfico muestra la medicación en el tiempo frente al número de convulsiones. La gráfica NO está normalizada.",
     "Vertical bars": "Barras verticales",
     "contentDemo": "Los datos que aparecen a continuación no son los suyos, sino una plantilla para mostrar los datos que contiene el informe.",
-    "selectperiod": "Selecciona de que periodo de tiempo quieres descargar los datos",
+    "selectperiod": "Selecciona un periodo de tiempo:",
     "Amount": "Cantidad"
   },
   "open":{
