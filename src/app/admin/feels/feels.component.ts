@@ -20,6 +20,8 @@ export class FeelsComponent implements OnInit, OnDestroy{
   dataCopy: any = [];
   loadedData: boolean = false;
   patients: any = [];
+  allFells = [];
+  allFellsCopy = [];
   countries = [];
   countriesSelected: any = [];
   allSelected: boolean = true;
@@ -36,6 +38,14 @@ export class FeelsComponent implements OnInit, OnDestroy{
   rangeDate: string = 'month';
   minDateRange = new Date();
   xAxisTicks = [];
+  rangeResourcesDate={
+    "drugs":180,
+    "phenotypes": 180,
+    "feels":30,
+    "seizures":30,
+    "weight": 180,
+    "height":180
+  }
   private subscription: Subscription = new Subscription();
   
   constructor(public translate: TranslateService, private raitoService: RaitoService, private searchService: SearchService, private sortService: SortService){
@@ -45,25 +55,28 @@ export class FeelsComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.subscription.add(this.raitoService.getFeels().subscribe(
       data => {
-        this.data = data.entry;
+        //this.data = data.entry;
+        var dataTemp = data.entry;
         
         this.loadedData = true;
 
         this.subscription.add(this.raitoService.getOnlyPatients(false).subscribe(
           data2 => {
             this.patients = data2;
+            this.allFells = [];
             for (var index in this.patients) {
-                for(var i=0;i<this.data.length;i++){
-                  if(this.data[i].resource.subject.reference==this.patients[index].result.entry[0].fullUrl){
-                    this.data[i].resource.country = this.patients[index].result.entry[0].resource.address[0].country;
-                    if(this.data[i].resource.country==null){
-                      this.data[i].resource.country ='Unknown'
+              var feelsPatient = [];
+                for(var i=0;i<dataTemp.length;i++){
+                  if(dataTemp[i].resource.subject.reference==this.patients[index].result.entry[0].fullUrl){
+                    dataTemp[i].resource.country = this.patients[index].result.entry[0].resource.address[0].country;
+                    if(dataTemp[i].resource.country==null){
+                      dataTemp[i].resource.country ='Unknown'
                     }
-                    var foundElementIndex = this.searchService.searchIndex(this.countries, 'name', this.data[i].resource.country);
+                    var foundElementIndex = this.searchService.searchIndex(this.countries, 'name', dataTemp[i].resource.country);
                     if(foundElementIndex==-1){
                       var users = []
                       users.push({id: this.patients[index].result.entry[0].fullUrl})
-                      this.countries.push({name:this.data[i].resource.country, count:1, users: users})
+                      this.countries.push({name:dataTemp[i].resource.country, count:1, users: users})
                       this.totalPatients++;
                     }else{
                       var foundElementIndex2 = this.searchService.searchIndex(this.countries[foundElementIndex].users, 'id', this.patients[index].result.entry[0].fullUrl);
@@ -73,9 +86,26 @@ export class FeelsComponent implements OnInit, OnDestroy{
                         this.totalPatients++;
                       }
                     }
+                    feelsPatient.push({value:dataTemp[i].resource.valueQuantity.value, date:dataTemp[i].resource.effectiveDateTime, country:dataTemp[i].resource.country})
+                    
                   }
                 }
+                feelsPatient.sort(this.sortService.DateSortInver("date"));
+                var color='danger';
+                if(feelsPatient.length>0){
+                  color = this.calculateColor(feelsPatient[feelsPatient.length-1].date)
+                }
+                if(this.patients[index].country==null){
+                  this.patients[index].country ='Unknown'
+                }
+                this.allFells.push({patientId: this.patients[index].patientId, feels:feelsPatient, country: this.patients[index].country, color: color});
             }
+            console.log(this.allFells);
+            this.allFellsCopy = JSON.parse(JSON.stringify(this.allFells));
+            for(var i=0;i<dataTemp.length;i++){
+              this.data.push({value:dataTemp[i].resource.valueQuantity.value, date:dataTemp[i].resource.effectiveDateTime, country:dataTemp[i].resource.country, id: dataTemp[i].resource.subject.reference})
+            }
+            console.log(this.data);
             this.dataCopy = JSON.parse(JSON.stringify(this.data));
             for (var indexCountry in this.countries) {
               this.countriesSelected.push(this.countries[indexCountry].name);
@@ -86,6 +116,20 @@ export class FeelsComponent implements OnInit, OnDestroy{
 
       }
     ));
+  }
+
+  calculateColor(date){
+    var color='danger';
+      var lastDate = new Date(date);
+      var actualDate = new Date();
+      var pastDate=new Date(actualDate);
+      pastDate.setDate(pastDate.getDate() - this.rangeResourcesDate['feels']);
+      if(lastDate<pastDate){
+        color='danger';
+      }else{
+        color='success';
+      }
+    return color;
   }
 
   ngOnDestroy() {
@@ -99,6 +143,7 @@ export class FeelsComponent implements OnInit, OnDestroy{
       this.allSelected = false;
     }
     this.applyFilter();
+    this.applyFilter2();
   }
 
   allChanged(){
@@ -112,15 +157,29 @@ export class FeelsComponent implements OnInit, OnDestroy{
       
     }
     this.applyFilter();
+    this.applyFilter2();
   }
 
+  applyFilter2(){
+    this.allFells = [];
+    for(var i=0;i<this.allFellsCopy.length;i++){
+      var enc = false;
+      for(var j=0;j<this.countriesSelected.length && !enc;j++){
+        if(this.allFellsCopy[i].country==this.countriesSelected[j]){
+          this.allFells.push(this.allFellsCopy[i]);
+          enc = true;
+        }
+      }
+    }
+  }
+  
   applyFilter(){
     this.loadedData=false;
     this.data = [];
     for(var i=0;i<this.dataCopy.length;i++){
       var enc = false;
       for(var j=0;j<this.countriesSelected.length && !enc;j++){
-        if(this.dataCopy[i].resource.country==this.countriesSelected[j]){
+        if(this.dataCopy[i].country==this.countriesSelected[j]){
           this.data.push(this.dataCopy[i]);
           enc = true;
         }
@@ -152,11 +211,11 @@ export class FeelsComponent implements OnInit, OnDestroy{
       period = null
     }
     for (var i = 0; i < this.data.length; i++) {
-      var splitDate = new Date(this.data[i].resource.effectiveDateTime);
+      var splitDate = new Date(this.data[i].date);
       if(new Date(minDate)<new Date(splitDate) && this.rangeDate!='all'){
-        series.push({ value: parseInt(this.data[i].resource.valueQuantity.value), name: splitDate.toDateString(), country: this.data[i].resource.country, stringDate: splitDate.toDateString()});
+        series.push({ value: parseInt(this.data[i].value), name: splitDate.toDateString(), country: this.data[i].country, stringDate: splitDate.toDateString()});
       }else if(this.rangeDate=='all'){
-        series.push({ value: parseInt(this.data[i].resource.valueQuantity.value), name: splitDate.toDateString(), country: this.data[i].resource.country, stringDate: splitDate.toDateString()});
+        series.push({ value: parseInt(this.data[i].value), name: splitDate.toDateString(), country: this.data[i].country, stringDate: splitDate.toDateString()});
         if(new Date(splitDate)<new Date(minDate)){
           minDate = splitDate.toDateString();
         }
@@ -290,6 +349,7 @@ export class FeelsComponent implements OnInit, OnDestroy{
     this.rangeDate = rangeDate;
     
     this.applyFilter();
+    this.applyFilter2();
   } 
 
 }

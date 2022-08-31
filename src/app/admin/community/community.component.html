@@ -38,14 +38,23 @@
 							</td>
 							<td>{{patient.result.entry[0].resource.address[0].country}} </td>
 							<td>
-								<span>Drugs: {{patient.metaInfo.drugs}} </span>
-								<span class="d-block">Phenotypes: {{patient.metaInfo.phenotypes}} </span>
-								<span class="d-block">Feels: {{patient.metaInfo.feels}} </span>
-								<span class="d-block">Proms: {{patient.metaInfo.proms}} </span>
-								<span class="d-block">Sizures: {{patient.metaInfo.seizures}} </span>
-								<span class="d-block">Weight: {{patient.metaInfo.weight}} </span>
-								<span class="d-block">Height: {{patient.metaInfo.height}} </span>
+								<span class="text-{{patient.metaInfo.drugs.color}}">Drugs</span>
+								<span class="d-block" class="text-{{patient.metaInfo.phenotypes.color}}">Symptoms </span>
+								<span class="d-block" class="text-{{patient.metaInfo.feels.color}}">Quality of life</span>
+								<span class="d-block" class="text-{{patient.metaInfo.proms.color}}">Proms</span>
+								<span class="d-block" class="text-{{patient.metaInfo.seizures.color}}">Sizures</span>
+								<span class="d-block" class="text-{{patient.metaInfo.weight.color}}">Weight</span>
+								<span class="d-block" class="text-{{patient.metaInfo.height.color}}">Height</span>
 							</td>
+							<!--<td>
+								<span class="d-block">Drugs: {{patient.metaInfo.drugs.drugs}} - {{patient.metaInfo.drugs.date|date}} {{patient.metaInfo.drugs.color}}</span>
+								<span class="d-block">Symptoms: {{patient.metaInfo.phenotypes.phenotypes}} - {{patient.metaInfo.phenotypes.date|date}} {{patient.metaInfo.phenotypes.color}}</span>
+								<span class="d-block">Quality of life: {{patient.metaInfo.feels.feels}} - {{patient.metaInfo.feels.date|date}} {{patient.metaInfo.feels.color}}</span>
+								<span class="d-block">Proms: {{patient.metaInfo.proms.proms}} - {{patient.metaInfo.proms.date|date}} {{patient.metaInfo.proms.color}}</span>
+								<span class="d-block">Sizures: {{patient.metaInfo.seizures.seizures}} - {{patient.metaInfo.seizures.date|date}} {{patient.metaInfo.seizures.color}}</span>
+								<span class="d-block">Weight: {{patient.metaInfo.weight.weight}} - {{patient.metaInfo.weight.date|date}} {{patient.metaInfo.weight.color}}</span>
+								<span class="d-block">Height: {{patient.metaInfo.height.height}} - {{patient.metaInfo.height.date|date}} {{patient.metaInfo.height.color}}</span>
+							</td>-->
 							<td>
 								<span class="mt-1 nav-item" ngbDropdown display="dynamic" placement="bottom-right">
 									<a class="position-relative colorlink" style="padding: 0rem 1rem;" id="dropdownPat{{i}}"

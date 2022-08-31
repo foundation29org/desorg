@@ -158,6 +158,7 @@ public colors: ColorHelper;
 public colors2: ColorHelper;
 age: number = null;
 weight: string;
+rangeResourcesDate:{};
   
   constructor(public translate: TranslateService, private raitoService: RaitoService, private dateService: DateService, private modalService: NgbModal, private apif29BioService: Apif29BioService, private adapter: DateAdapter<any>, private sortService: SortService,  private searchService: SearchService, public jsPDFService: jsPDFService, private apiDx29ServerService: ApiDx29ServerService){
 
@@ -165,6 +166,15 @@ weight: string;
 
   ngOnInit() {
     this.lang = sessionStorage.getItem('lang');
+
+    this.rangeResourcesDate={
+      "drugs":180,
+      "phenotypes": 180,
+      "feels":30,
+      "seizures":30,
+      "weight": 180,
+      "height":180
+    }
 
     this.subscription.add(this.raitoService.getOnlyPatients(true).subscribe(
       data => {
@@ -176,6 +186,7 @@ weight: string;
           }else{
             this.patients[index].result.entry[0].resource.age = null;
           }
+          this.patients[index].metaInfo=this.calculateColorMetaInfo(this.patients[index].metaInfo)
         }
         this.loadedUsers = true;
       }
@@ -214,6 +225,23 @@ weight: string;
     var res = months <= 0 ? 0 : months;
     var m=res % 12;
     return {years:age, months:m }
+  }
+
+  calculateColorMetaInfo(metaInfo){
+    for (var index in metaInfo) {
+      var lastDate = new Date(metaInfo[index].date);
+      var actualDate = new Date();
+      var pastDate=new Date(actualDate);
+      pastDate.setDate(pastDate.getDate() - this.rangeResourcesDate[index]);
+      if(metaInfo[index][index]==0){
+        metaInfo[index].color='danger';
+      }else if(lastDate<pastDate){
+        metaInfo[index].color='danger';
+      }else{
+        metaInfo[index].color='success';
+      }
+    }
+    return metaInfo;
   }
 
 
