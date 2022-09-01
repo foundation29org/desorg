@@ -39,7 +39,16 @@ export class FeelsComponent implements OnInit, OnDestroy{
   minDateRange = new Date();
   xAxisTicks = [];
   rangeResourcesDate:{};
-  
+  rangeResourcesDateDefault={
+    "drugs":180,
+    "phenotypes": 180,
+    "feels":30,
+    "seizures":30,
+    "weight": 180,
+    "height":180
+  }
+   
+
   private subscription: Subscription = new Subscription();
   
   constructor(public translate: TranslateService, private raitoService: RaitoService, private searchService: SearchService, private sortService: SortService){
@@ -116,12 +125,15 @@ export class FeelsComponent implements OnInit, OnDestroy{
   }
 
   loadGroupFile(){
-    this.subscription.add(this.raitoService.getGroupFile().subscribe(
-      data => {
-        this.rangeResourcesDate = data.body;
+      this.subscription.add(this.raitoService.getGroupFile().subscribe((data : any) => {
+          console.log(data);
+          this.rangeResourcesDate = data.body;
+      }, (err) => {
+        console.log(err);
+        this.rangeResourcesDate = this.rangeResourcesDateDefault;
       }
-    ));
-}
+      ));
+  }
 
   calculateColor(date){
     var color='danger';

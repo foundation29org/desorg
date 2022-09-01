@@ -159,6 +159,14 @@ public colors2: ColorHelper;
 age: number = null;
 weight: string;
 rangeResourcesDate:{};
+rangeResourcesDateDefault={
+  "drugs":180,
+  "phenotypes": 180,
+  "feels":30,
+  "seizures":30,
+  "weight": 180,
+  "height":180
+}
   
   constructor(public translate: TranslateService, private raitoService: RaitoService, private dateService: DateService, private modalService: NgbModal, private apif29BioService: Apif29BioService, private adapter: DateAdapter<any>, private sortService: SortService,  private searchService: SearchService, public jsPDFService: jsPDFService, private apiDx29ServerService: ApiDx29ServerService){
 
@@ -198,10 +206,13 @@ rangeResourcesDate:{};
   }
 
   loadGroupFile(){
-      this.subscription.add(this.raitoService.getGroupFile().subscribe(
-        data => {
+      this.subscription.add(this.raitoService.getGroupFile().subscribe((data : any) => {
+          console.log(data);
           this.rangeResourcesDate = data.body;
-        }
+      }, (err) => {
+        console.log(err);
+        this.rangeResourcesDate = this.rangeResourcesDateDefault;
+      }
       ));
   }
 

@@ -117,7 +117,8 @@ export class RaitoService {
         .map( (res : any) => {
           return res;
          }, (err) => {
-           console.log(err);
+          console.log(err);
+          return err;
          })
     }
 
