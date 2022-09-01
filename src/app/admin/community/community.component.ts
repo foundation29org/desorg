@@ -166,15 +166,7 @@ rangeResourcesDate:{};
 
   ngOnInit() {
     this.lang = sessionStorage.getItem('lang');
-
-    this.rangeResourcesDate={
-      "drugs":180,
-      "phenotypes": 180,
-      "feels":30,
-      "seizures":30,
-      "weight": 180,
-      "height":180
-    }
+    this.loadGroupFile();
 
     this.subscription.add(this.raitoService.getOnlyPatients(true).subscribe(
       data => {
@@ -202,7 +194,15 @@ rangeResourcesDate:{};
           }
       }
       //console.log(window.innerHeight);
-  });
+    });
+  }
+
+  loadGroupFile(){
+      this.subscription.add(this.raitoService.getGroupFile().subscribe(
+        data => {
+          this.rangeResourcesDate = data.body;
+        }
+      ));
   }
 
   ngOnDestroy() {

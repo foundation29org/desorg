@@ -112,6 +112,15 @@ export class RaitoService {
          })
     }
 
+    getGroupFile(){
+      return this.http.get(environment.urlRaito+'/api/group/configfile/'+this.authService.getGroup())
+        .map( (res : any) => {
+          return res;
+         }, (err) => {
+           console.log(err);
+         })
+    }
+
     loadPatientId(idPatient){
       return this.http.get(environment.urlRaito+'/api/patients/'+idPatient)
         .map( (res : any) => {
