@@ -158,14 +158,31 @@ public colors: ColorHelper;
 public colors2: ColorHelper;
 age: number = null;
 weight: string;
-rangeResourcesDate:{};
+rangeResourcesDate: any = {};
 rangeResourcesDateDefault={
-  "drugs":180,
-  "phenotypes": 180,
-  "feels":30,
-  "seizures":30,
-  "weight": 180,
-  "height":180
+  "data":{
+      "drugs":{
+          "daysToUpdate":180
+      },
+      "phenotypes":{
+          "daysToUpdate":180
+      },
+      "feels":{
+          "daysToUpdate":30
+      },
+      "seizures":{
+          "daysToUpdate":30
+      },
+      "weight": {
+          "daysToUpdate":180
+      },
+      "height":{
+          "daysToUpdate":180
+      }
+  },    
+  "meta":{
+      "id":""
+  }
 }
   
   constructor(public translate: TranslateService, private raitoService: RaitoService, private dateService: DateService, private modalService: NgbModal, private apif29BioService: Apif29BioService, private adapter: DateAdapter<any>, private sortService: SortService,  private searchService: SearchService, public jsPDFService: jsPDFService, private apiDx29ServerService: ApiDx29ServerService){
@@ -243,7 +260,11 @@ rangeResourcesDateDefault={
       var lastDate = new Date(metaInfo[index].date);
       var actualDate = new Date();
       var pastDate=new Date(actualDate);
-      pastDate.setDate(pastDate.getDate() - this.rangeResourcesDate[index]);
+      if(this.rangeResourcesDate.data[index]!=undefined){
+        pastDate.setDate(pastDate.getDate() - this.rangeResourcesDate.data[index].daysToUpdate);
+      }else{
+        pastDate = lastDate;
+      }
       if(metaInfo[index][index]==0){
         metaInfo[index].color='danger';
       }else if(lastDate<pastDate){

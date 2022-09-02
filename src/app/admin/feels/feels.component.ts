@@ -38,15 +38,32 @@ export class FeelsComponent implements OnInit, OnDestroy{
   rangeDate: string = 'month';
   minDateRange = new Date();
   xAxisTicks = [];
-  rangeResourcesDate:{};
+  rangeResourcesDate: any = {};
   rangeResourcesDateDefault={
-    "drugs":180,
-    "phenotypes": 180,
-    "feels":30,
-    "seizures":30,
-    "weight": 180,
-    "height":180
-  }
+    "data":{
+        "drugs":{
+            "daysToUpdate":180
+        },
+        "phenotypes":{
+            "daysToUpdate":180
+        },
+        "feels":{
+            "daysToUpdate":30
+        },
+        "seizures":{
+            "daysToUpdate":30
+        },
+        "weight": {
+            "daysToUpdate":180
+        },
+        "height":{
+            "daysToUpdate":180
+        }
+    },    
+    "meta":{
+        "id":""
+    }
+}
    
 
   private subscription: Subscription = new Subscription();
@@ -140,7 +157,7 @@ export class FeelsComponent implements OnInit, OnDestroy{
       var lastDate = new Date(date);
       var actualDate = new Date();
       var pastDate=new Date(actualDate);
-      pastDate.setDate(pastDate.getDate() - this.rangeResourcesDate['feels']);
+      pastDate.setDate(pastDate.getDate() - this.rangeResourcesDate.data['feels'].daysToUpdate);
       if(lastDate<pastDate){
         color='danger';
       }else{
