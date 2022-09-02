@@ -1053,7 +1053,7 @@
     "grap4.1": "The following graph shows the medication in through time VS number of seizures. The graph is NOT normalized.",
     "Vertical bars": "Vertical bars",
     "contentDemo": "The data below is not your data, but a template to show you what data the report contains.",
-    "selectperiod": "Selected from which period of time you want to download the data",
+    "selectperiod": "Select a period of time:",
     "Amount": "Cantidad"
   },
   "open":{

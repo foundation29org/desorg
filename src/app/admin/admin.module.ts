@@ -17,9 +17,13 @@ import { DrugsComponent } from './drugs/drugs.component';
 import { FeelsComponent } from './feels/feels.component';
 import { SymptomsComponent } from './symptoms/symptoms.component';
 import { DataManagementComponent } from './datamanagement/datamanagement.component';
-
-
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatSelectModule} from '@angular/material/select';
+import { MatNativeDateModule } from '@angular/material/core';
+import { ComboChartComponent2, ComboSeriesVerticalComponent2 } from './community/combo-chart';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
     imports: [
@@ -30,7 +34,12 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
         TranslateModule,
         FormsModule,
         UiSwitchModule,
-        NgxDatatableModule
+        NgxDatatableModule,
+        MatExpansionModule,
+        MatCheckboxModule,
+        MatSelectModule,
+        NgxChartsModule,
+        MatNativeDateModule
     ],
     exports: [TranslateModule],
     declarations: [
@@ -41,7 +50,9 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
         DrugsComponent,
         FeelsComponent,
         SymptomsComponent,
-        DataManagementComponent
+        DataManagementComponent,
+        ComboChartComponent2,
+        ComboSeriesVerticalComponent2
     ],
     providers: [],
 })

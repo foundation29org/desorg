@@ -14,6 +14,7 @@ export class PromsComponent implements OnInit, OnDestroy{
 
   data: any = [];
   loadedData: boolean = false;
+  questionnaires: any = [];
   private subscription: Subscription = new Subscription();
 
   constructor(public translate: TranslateService, private raitoService: RaitoService){
@@ -21,10 +22,24 @@ export class PromsComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit() {
+
+    this.loadQuestionnaires();
+
     this.subscription.add(this.raitoService.getProms().subscribe(
       data => {
+        console.log(data);
         this.data = data.entry;
         this.loadedData = true;
+      }
+    ));
+  }
+
+  loadQuestionnaires(){
+
+    this.subscription.add(this.raitoService.getQuestionnairesGroup().subscribe(
+      data => {
+        console.log(data);
+        this.questionnaires = data.questionnaires;
       }
     ));
   }
