@@ -158,8 +158,7 @@ export class RaitoService {
          })
     }
 
-    getFeelsPatient(idPatient, rangeDate){
-      var info = {rangeDate: rangeDate}
+    getFeelsPatient(idPatient, info){
       return this.http.post(environment.urlRaito+'/api/feels/dates/'+idPatient, info)
         .map( (res : any) => {
           return res;
@@ -168,8 +167,7 @@ export class RaitoService {
          })
     }
 
-    getSeizuresPatient(idPatient, rangeDate){
-      var info = {rangeDate: rangeDate}
+    getSeizuresPatient(idPatient, info){
       return this.http.post(environment.urlRaito+'/api/seizures/dates/'+idPatient, info)
         .map( (res : any) => {
           return res;
@@ -178,8 +176,7 @@ export class RaitoService {
          })
     }
 
-    getMedicationsPatient(idPatient, rangeDate){
-      var info = {rangeDate: rangeDate}
+    getMedicationsPatient(idPatient, info){
       return this.http.post(environment.urlRaito+'/api/medications/dates/'+idPatient, info)
         .map( (res : any) => {
           return res;
