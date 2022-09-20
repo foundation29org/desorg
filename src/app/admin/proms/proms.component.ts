@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { RaitoService } from 'app/shared/services/raito.service';
+import { SearchService } from 'app/shared/services/search.service';
 import { NgbModal, NgbModalRef, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs/Subscription';
 import Swal from 'sweetalert2';
@@ -22,10 +23,11 @@ export class PromsComponent implements OnInit, OnDestroy{
   changeQuestion: any = {};
   modalReference: NgbModalRef;
   showPanelNew: boolean = false;
+  isEditing: boolean = false;
   @ViewChild('f') NewForm: NgForm;
   private subscription: Subscription = new Subscription();
 
-  constructor(public translate: TranslateService, private raitoService: RaitoService, private modalService: NgbModal){
+  constructor(public translate: TranslateService, private raitoService: RaitoService, private modalService: NgbModal, private searchService: SearchService){
 
   }
 
@@ -84,6 +86,11 @@ export class PromsComponent implements OnInit, OnDestroy{
     this.modalReference = this.modalService.open(contentModalForm, ngbModalOptions);
   }
 
+  promchanged(question, questionnaire){
+    console.log(question);
+    console.log(questionnaire);
+  }
+
   deleteForm(questionnaire){
     Swal.fire({
       title: this.translate.instant("generics.Are you sure?"),
@@ -133,7 +140,8 @@ export class PromsComponent implements OnInit, OnDestroy{
 
   newQuestion() {
     this.showPanelNew = true;
-    this.changeQuestion = {text:'', answers:[{text:''}], idProm:(this.actualQuestionnaire.items.length+1)}
+    this.isEditing=false;
+    this.changeQuestion = {text:'', answers:[{text:'', value:''}], idProm:(this.actualQuestionnaire.items.length+1), type:'', other: null}
   }
 
   addQuestion() {
@@ -142,6 +150,16 @@ export class PromsComponent implements OnInit, OnDestroy{
 
   deleteAltQuestion(index){
     this.changeQuestion.answers.splice(index, 1);
+  }
+
+  cancelNewQuestion(){
+    this.changeQuestion = {text:'', answers:[{text:'', value:''}], idProm:(this.actualQuestionnaire.items.length+1), type:'', other: null}
+    this.showPanelNew = false;
+  }
+
+  changeValue(value, index){
+    this.changeQuestion.answers[index].value = value;
+
   }
 
   submitInvalidForm() {
@@ -155,12 +173,30 @@ export class PromsComponent implements OnInit, OnDestroy{
   }
 
   onSubmitNew(){
-    this.actualQuestionnaire.items.push(this.changeQuestion)
+    if(this.isEditing){
+      var foundElementIndex = this.searchService.searchIndex(this.actualQuestionnaire.items, 'idProm', this.changeQuestion.idProm);
+      if(foundElementIndex!=-1){
+        this.actualQuestionnaire.items[foundElementIndex]=this.changeQuestion;
+      }else{
+        this.actualQuestionnaire.items.push(this.changeQuestion)
+      }
+    }else{
+      this.actualQuestionnaire.items.push(this.changeQuestion)
+    }
+    this.isEditing = false;
     this.showPanelNew = false;
+  }
+
+  editQuestion(question){
+    console.log(question);
+    this.changeQuestion = question;
+    this.isEditing=true;
+    this.showPanelNew=true;
   }
 
   saveQuestionnaire(){
     //.push(this.actualQuestionnaire);
+    this.closeModal();
   }
 
   searchForm(contentModalSearch){
