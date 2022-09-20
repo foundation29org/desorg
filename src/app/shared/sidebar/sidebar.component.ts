@@ -83,7 +83,10 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
 
         }
       });
-
+      if(this.authService.getGroup()=='61bb38fad6e0cb14f08881c0'){
+        this.urlLogo = 'assets/img/groups/logo-Dravet.png';
+        this.urlLogo2 = 'assets/img/groups/logo-Dravet.png';
+      }
 
     this.redirectUrl = this.authService.getRedirectUrl();
 
@@ -94,7 +97,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
         var tempUrl= (event.url).toString().split('?');
         var actualUrl = tempUrl[0];
         var tempUrl1 = (actualUrl).toString();
-        if(tempUrl1.indexOf('/home')!=-1){
+        if(tempUrl1.indexOf('/admin/dashboard-admin')!=-1){
           this.isHomePage = true;
         }else{
           this.isHomePage = false;

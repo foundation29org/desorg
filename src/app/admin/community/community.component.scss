@@ -239,7 +239,7 @@
 }
 
 .articleTitle:hover {
-  color: #f9423a;
+  color: #009da0;
   text-decoration: underline;
 }
 
@@ -272,7 +272,7 @@
 }
 
 .titleneon {
-  color:#f9423a;
+  color:#009da0;
 }
 
 .tableList {
@@ -328,7 +328,7 @@
 ::ng-deep .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
   color: #000000 !important;
   background-color: #fff !important;
-  //border-color: #f9423a !important;
+  //border-color: #009da0 !important;
   border: 1px solid #dfdfdf !important;
   border-bottom-width: 1px;
   border-bottom-width: 0px !important;
@@ -656,7 +656,7 @@ body {
  }
 
  .nav-tabs .nav-link.active {
-  border-bottom: 2px solid #f9423a !important;
+  border-bottom: 2px solid #009da0 !important;
   background-color: transparent !important;
   border-color: transparent !important;
 }

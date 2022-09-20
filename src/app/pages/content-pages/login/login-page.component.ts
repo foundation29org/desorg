@@ -225,7 +225,7 @@ export class LoginPageComponent implements OnDestroy, OnInit{
     }
     // On registration link click
     onRegister() {
-        this.router.navigate(['/pre-register']);
+        this.router.navigate(['/register']);
     }
 
     testHotjarTrigger(lang){
