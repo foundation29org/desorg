@@ -1,15 +1,24 @@
 <!-- Sidebar Header starts -->
 <div class="sidebar-header">
     <div class="logo clearfix">
-        <a [routerLink]="redirectUrl" class="logo-text float-left">
+        <a [routerLink]="redirectUrl" *ngIf="!isHomePage" class="logo-text float-left">
             <div class="logo-img" style="display:none;">
-                <img [src]=urlLogo style="height: 48px;" />
+                <img [src]=urlLogo />
             </div>
             <div class="logo-img2">
-                <img [src]=urlLogo2 style="height: 48px;" />
-                <span class="font-large-2 text-bold-600" style="position: absolute;">Raito</span>
+                <img [src]=urlLogo2 />
+                <!--<span class="font-large-2 text-bold-600" style="position: absolute;">Raito</span>-->
             </div>
         </a>
+        <span *ngIf="isHomePage" class="logo-text float-left">
+            <div class="logo-img" style="display:none;">
+                <img [src]=urlLogo />
+            </div>
+            <div class="logo-img2">
+                <img [src]=urlLogo2 />
+                <!--<span class="font-large-2 text-bold-600" style="position: absolute;">Raito</span>-->
+            </div>
+        </span>
         <a class="nav-toggle d-none d-lg-none d-xl-block" id="sidebarToggle" href="javascript:;">
             <i #toggleIcon appSidebarToggle class="ft-toggle-right toggle-icon" data-toggle="expanded"></i>
         </a>

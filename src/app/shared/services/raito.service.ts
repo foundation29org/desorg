@@ -112,6 +112,17 @@ export class RaitoService {
          })
     }
 
+    loadQuestionnaire(questionnaireId: string){
+      //cargar las palabras del idioma
+      return this.http.get('https://raw.githubusercontent.com/foundation29org/raito_resources/main/questionnaires/'+questionnaireId+'.json')
+        .map( (res : any) => {
+            return res;
+         }, (err) => {
+           console.log(err);
+           return {};
+         })
+    }
+
     getGroupFile(){
       return this.http.get(environment.urlRaito+'/api/group/configfile/'+this.authService.getGroup())
         .map( (res : any) => {

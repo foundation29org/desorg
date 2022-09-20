@@ -285,6 +285,8 @@ a{
 
 .btn-primary {
   color: #fff !important;
+  background-color: #009da0 !important;
+  border-color: #009da0 !important;
 }
 
 .btn-info {
