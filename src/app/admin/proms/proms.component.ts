@@ -127,6 +127,8 @@ export class PromsComponent implements OnInit, OnDestroy{
         this.modalReference.close();
         this.modalReference = undefined;
     }
+    this.showPanelNew = false;
+    this.isEditing=false;
   }
 
    getQuestionnaire(questionnaireId) {
