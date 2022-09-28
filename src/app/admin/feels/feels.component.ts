@@ -143,8 +143,7 @@ export class FeelsComponent implements OnInit, OnDestroy{
 
   loadGroupFile(){
       this.subscription.add(this.raitoService.getGroupFile().subscribe((data : any) => {
-          console.log(data);
-          this.rangeResourcesDate = data.body;
+          this.rangeResourcesDate = data;
       }, (err) => {
         console.log(err);
         this.rangeResourcesDate = this.rangeResourcesDateDefault;
