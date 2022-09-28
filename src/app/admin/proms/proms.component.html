@@ -12,7 +12,7 @@
 					</span>
 					<span class="d-block">
 						<span *ngFor="let questionnaire of questionnaires ; let i = index" class="font-small-3 text-muted">
-							<span class="d-block">{{questionnaire.id}} <span class="fa fa-edit primary mr-1 ml-1 pointer" (click)="editForm(questionnaire, contentModalForm)"></span><span class="fa fa-trash primary pointer" (click)="deleteForm(questionnaire)"></span></span>
+							<span class="d-block" style="text-transform: none;">{{questionnaire.id}} <span *ngIf="questionnaire.createdById==actuaGroup"  class="fa fa-edit primary mr-1 ml-1 pointer" (click)="editForm(questionnaire, contentModalForm)"></span><span class="fa fa-trash primary pointer" (click)="deleteForm(questionnaire)"></span></span>
 							<!--<span *ngIf="questionnaires.length>0 && (i>0) && (i<=questionnaires.length-1)">,</span>-->
 						</span>
 					</span>
@@ -71,6 +71,17 @@
 	  </div>
 	</div>
 	  <div class="content-wrapper" *ngIf="!showPanelNew">
+		<fieldset>
+			<div class="row mt-3">
+			  <div class="col-md-12">
+				<div class="form-group">
+				  <label for="id">Id</label>
+				  <input type="text" id="id" class="form-control"  name="id" [disabled]="updatingQuestionnaire" [(ngModel)]="actualQuestionnaire.id" required #id="ngModel">
+				  <small class="form-text title-muted danger" *ngIf="!id.valid && (id.dirty || id.touched)">{{'generics.required' | translate }}</small>
+				</div>
+			  </div>
+			</div>
+		  </fieldset>
 		<fieldset>
 			<div class="row mt-3">
 			  <div class="col-md-12">

@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { RaitoService } from 'app/shared/services/raito.service';
 import { SearchService } from 'app/shared/services/search.service';
+import { AuthService } from '../../../app/shared/auth/auth.service';
 import { NgbModal, NgbModalRef, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs/Subscription';
 import Swal from 'sweetalert2';
@@ -24,15 +25,17 @@ export class PromsComponent implements OnInit, OnDestroy{
   modalReference: NgbModalRef;
   showPanelNew: boolean = false;
   isEditing: boolean = false;
+  updatingQuestionnaire: boolean = false;
+  actuaGroup: string = '';
   @ViewChild('f') NewForm: NgForm;
   private subscription: Subscription = new Subscription();
 
-  constructor(public translate: TranslateService, private raitoService: RaitoService, private modalService: NgbModal, private searchService: SearchService){
+  constructor(public translate: TranslateService, private raitoService: RaitoService, private modalService: NgbModal, private searchService: SearchService, private authService: AuthService){
 
   }
 
   ngOnInit() {
-
+    this.actuaGroup = this.authService.getGroup();
     this.loadQuestionnaires();
 
     this.subscription.add(this.raitoService.getProms().subscribe(
@@ -62,6 +65,8 @@ export class PromsComponent implements OnInit, OnDestroy{
 
   addForm(contentModalForm){
     this.actualQuestionnaire = {
+      createdById:this.authService.getGroup(),
+      id:'',
       title:'',
       items:[]
     };
@@ -77,6 +82,7 @@ export class PromsComponent implements OnInit, OnDestroy{
   editForm(questionnaire, contentModalForm){
     //this.actualQuestionnaire = questionnaire;
     console.log(questionnaire);
+    this.updatingQuestionnaire=true;
     this.getQuestionnaire(questionnaire.id);
     let ngbModalOptions: NgbModalOptions = {
       backdrop : 'static',
@@ -127,6 +133,7 @@ export class PromsComponent implements OnInit, OnDestroy{
         this.modalReference.close();
         this.modalReference = undefined;
     }
+    this.updatingQuestionnaire=false;
     this.showPanelNew = false;
     this.isEditing=false;
   }
@@ -197,8 +204,35 @@ export class PromsComponent implements OnInit, OnDestroy{
   }
 
   saveQuestionnaire(){
-    //.push(this.actualQuestionnaire);
-    this.closeModal();
+    if(this.updatingQuestionnaire){
+      this.subscription.add(this.raitoService.updateQuestionnaire(this.actualQuestionnaire).subscribe(
+        data => {
+          console.log(data);
+          if(data.message=='dont exists'){
+            Swal.fire('The id dont exists', 'Change the title please', "warning");
+          }else if(data.message=='dont have permissions'){
+            Swal.fire('', 'You dont have permissions', "warning");
+          }else{
+            this.loadQuestionnaires();
+            this.closeModal();
+          }
+          
+        }
+      ));
+    }else{
+      this.subscription.add(this.raitoService.newQuestionnaire(this.actualQuestionnaire).subscribe(
+        data => {
+          console.log(data);
+          if(data.message=='already exists'){
+            Swal.fire('The name already exists', 'Change the title please', "warning");
+          }else{
+            this.loadQuestionnaires();
+            this.closeModal();
+          }
+          
+        }
+      ));
+    }    
   }
 
   searchForm(contentModalSearch){

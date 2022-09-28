@@ -123,6 +123,26 @@ export class RaitoService {
          })
     }
 
+    newQuestionnaire(actualQuestionnaire){
+      console.log(actualQuestionnaire);
+      return this.http.post(environment.urlRaito+'/api/resources/questionnaire/'+this.authService.getGroup(), actualQuestionnaire)
+        .map( (res : any) => {
+          return res;
+         }, (err) => {
+           console.log(err);
+         })
+    }
+
+    updateQuestionnaire(actualQuestionnaire){
+      console.log(actualQuestionnaire);
+      return this.http.put(environment.urlRaito+'/api/resources/questionnaire/'+this.authService.getGroup(), actualQuestionnaire)
+        .map( (res : any) => {
+          return res;
+         }, (err) => {
+           console.log(err);
+         })
+    }
+
     getGroupFile(){
       return this.http.get(environment.urlRaito+'/api/group/configfile/'+this.authService.getGroup())
         .map( (res : any) => {
