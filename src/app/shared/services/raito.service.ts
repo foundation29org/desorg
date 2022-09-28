@@ -114,7 +114,7 @@ export class RaitoService {
 
     loadQuestionnaire(questionnaireId: string){
       //cargar las palabras del idioma
-      return this.http.get('https://raw.githubusercontent.com/foundation29org/raito_resources/main/questionnaires/'+questionnaireId+'.json')
+      return this.http.get(environment.urlRaito + '/api/resources/questionnaire/'+questionnaireId)
         .map( (res : any) => {
             return res;
          }, (err) => {
