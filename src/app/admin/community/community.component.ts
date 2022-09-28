@@ -224,7 +224,6 @@ rangeResourcesDateDefault={
 
   loadGroupFile(){
       this.subscription.add(this.raitoService.getGroupFile().subscribe((data : any) => {
-          console.log(data);
           this.rangeResourcesDate = data.body;
       }, (err) => {
         console.log(err);
