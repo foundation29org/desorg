@@ -1255,7 +1255,7 @@ loadTranslationsElements() {
             var theDate2 = actualDate;
             theDate2.setDate(theDate2.getDate()+1);
             actualDate = theDate2.toDateString();
-            if(actualDate != nextDate){
+            if(actualDate != nextDate && actualDate< nextDate){
               copymeds[i].series.push({value: 0,name:actualDate})
             }
             
