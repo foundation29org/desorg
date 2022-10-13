@@ -48,11 +48,12 @@ export class PromsComponent implements OnInit, OnDestroy{
   }
 
   loadQuestionnaires(){
-
+    this.questionnaires = [];
     this.subscription.add(this.raitoService.getQuestionnairesGroup().subscribe(
       data => {
-        console.log(data);
-        this.questionnaires = data.questionnaires;
+        if(data.questionnaires!='No data'){
+          this.questionnaires = data.questionnaires;
+        }
       }
     ));
   }
