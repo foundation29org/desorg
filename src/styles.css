@@ -157,7 +157,7 @@ body {
   font: inherit;
 }
 
-:host /deep/ a{
+:host ::ng-deep a{
   color: #33658a !important;
 }
 
