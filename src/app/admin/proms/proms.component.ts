@@ -205,7 +205,10 @@ export class PromsComponent implements OnInit, OnDestroy{
   }
 
   saveQuestionnaire(){
-    if(this.updatingQuestionnaire){
+    this.loadQuestionnaires();
+    this.closeModal();
+
+    /*if(this.updatingQuestionnaire){
       this.subscription.add(this.raitoService.updateQuestionnaire(this.actualQuestionnaire).subscribe(
         data => {
           console.log(data);
@@ -233,7 +236,8 @@ export class PromsComponent implements OnInit, OnDestroy{
           
         }
       ));
-    }    
+    }
+    */
   }
 
   searchForm(contentModalSearch){
