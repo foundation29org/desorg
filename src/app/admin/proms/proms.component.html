@@ -12,7 +12,10 @@
 					</span>
 					<span class="d-block">
 						<span *ngFor="let questionnaire of questionnaires ; let i = index" class="font-small-3 text-muted">
-							<span class="d-block" style="text-transform: none;">{{questionnaire.id}} <span *ngIf="questionnaire.createdById==actuaGroup"  class="fa fa-edit primary mr-1 ml-1 pointer" (click)="editForm(questionnaire, contentModalForm)"></span><span class="fa fa-trash primary pointer" (click)="deleteForm(questionnaire)"></span></span>
+							<span class="d-block" style="text-transform: none;">{{questionnaire.id}} 
+								<span *ngIf="questionnaire.createdById==actuaGroup"  class="fa fa-edit primary mr-1 ml-1 pointer" (click)="editForm(questionnaire, contentModalForm)"></span>
+								<span class="fa fa-trash primary pointer" (click)="deleteForm(questionnaire)"></span>
+							</span>
 							<!--<span *ngIf="questionnaires.length>0 && (i>0) && (i<=questionnaires.length-1)">,</span>-->
 						</span>
 					</span>
@@ -214,9 +217,37 @@
 	<div class="content-wrapper" >
 		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container">
-    <div class="row mt-3">
+	<div class="row mt-3" *ngIf="!loadedAllQuestionaires">
+		<div class="col-md-12 center-elements"> 
+			<i class="fa fa-spinner pink fa-spin fa-3x fa-fw"></i>
+		</div>
+		
+	</div>
+    <div class="row mt-3" *ngIf="loadedAllQuestionaires">
         <!-- Product-->
-        <div class="col-lg-4 col-sm-6 mb-30">
+		<div class="col-lg-4 col-sm-6 mb-30" *ngFor="let questionnaire of allQuestionnaires ; let i = index" >
+			<div class="product-card mx-auto mb-5">
+                <div class="product-head d-flex justify-content-between align-items-center">
+					<span *ngIf="questionnaire.installed" class="badge badge-info">Installed</span>
+					<span *ngIf="!questionnaire.installed" class="badge badge-dark pointer" (click)="addQuestionnaire(questionnaire.id)">Install</span>
+					<div class="star">
+						<ngb-rating [max]="5" [(rate)]="questionnaire.data.rate.avg" title="{{questionnaire.data.rate.avg}} " [readonly]="false" (rateChange)="callevent(questionnaire, questionnaire.data.rate.avg)"></ngb-rating>
+						<span>({{questionnaire.data.rate.ids.length}})</span>
+					</div>
+                </div>
+                <a class="product-thumb mt-3 mb-3 p-2" href="javascript:void(0)"><img [src]=questionnaire.data.img alt="Logo dravet europe"></a>
+                <div class="product-card-body"><a class="product-meta" href="javascript:void(0)">{{questionnaire.data.createdby}}</a>
+                    <h5 class="product-title">{{questionnaire.data.title}}</h5><span class="product-price">{{questionnaire.data.description}}</span>
+                </div>
+                <div class="product-buttons-wrap">
+                    <div class="product-buttons">
+                        <div *ngIf="!questionnaire.installed" class="product-button"><a href="javascript:void(0)"  (click)="addQuestionnaire(questionnaire.id)"><i class="fa fa-heart"></i></a></div>
+						<div *ngIf="questionnaire.installed" class="product-button"><a href="javascript:void(0)" (click)="deleteForm(questionnaire)"><i class="fa fa-trash"></i></a></div>
+                    </div>
+                </div>
+            </div>
+		</div>
+        <!--<div class="col-lg-4 col-sm-6 mb-30">
             <div class="product-card mx-auto mb-3">
                 <div class="product-head d-flex justify-content-between align-items-center"><span class="badge badge-info">Installed</span>
                     <div class="rating-stars"><i class="fa fa-star active"></i><i class="fa fa-star active"></i><i class="fa fa-star active"></i><i class="fa fa-star active"></i><i class="fa fa-star active"></i>
@@ -235,7 +266,6 @@
                 </div>
             </div>
         </div>
-        <!-- Product-->
         <div class="col-lg-4 col-sm-6 mb-30">
             <div class="product-card mx-auto mb-5">
                 <div class="product-head d-flex justify-content-between align-items-center"><span class="badge badge-success">Popular</span>
@@ -254,7 +284,6 @@
                 </div>
             </div>
         </div>
-		 <!-- Product-->
 		 <div class="col-lg-4 col-sm-6 mb-30">
             <div class="product-card mx-auto mb-3">
                 <div class="product-head text-right">
@@ -272,7 +301,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.10.0/feather.js"></script>
