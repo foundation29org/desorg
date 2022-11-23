@@ -112,6 +112,17 @@ export class RaitoService {
          })
     }
 
+    loadAllQuestionnaire(){
+      //cargar las palabras del idioma
+      return this.http.get(environment.urlRaito + '/api/resources/questionnaires/all')
+        .map( (res : any) => {
+            return res;
+         }, (err) => {
+           console.log(err);
+           return {};
+         })
+    }
+
     loadQuestionnaire(questionnaireId: string){
       //cargar las palabras del idioma
       return this.http.get(environment.urlRaito + '/api/resources/questionnaire/'+questionnaireId)
@@ -136,6 +147,36 @@ export class RaitoService {
     updateQuestionnaire(actualQuestionnaire){
       console.log(actualQuestionnaire);
       return this.http.put(environment.urlRaito+'/api/resources/questionnaire/'+this.authService.getGroup(), actualQuestionnaire)
+        .map( (res : any) => {
+          return res;
+         }, (err) => {
+           console.log(err);
+         })
+    }
+
+    addlinkQuestionnaire(actualQuestionnaire){
+      console.log(actualQuestionnaire);
+      return this.http.post(environment.urlRaito+'/api/resources/questionnaire/add/'+this.authService.getGroup(), actualQuestionnaire)
+        .map( (res : any) => {
+          return res;
+         }, (err) => {
+           console.log(err);
+         })
+    }
+
+    deletelinkQuestionnaire(actualQuestionnaire){
+      console.log(actualQuestionnaire);
+      return this.http.post(environment.urlRaito+'/api/resources/questionnaire/remove/'+this.authService.getGroup(), actualQuestionnaire)
+        .map( (res : any) => {
+          return res;
+         }, (err) => {
+           console.log(err);
+         })
+    }
+
+    rateQuestionnaire(info){
+      console.log(info);
+      return this.http.post(environment.urlRaito+'/api/resources/questionnaire/rate/'+this.authService.getGroup(), info)
         .map( (res : any) => {
           return res;
          }, (err) => {

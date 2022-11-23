@@ -19,6 +19,8 @@ export class PromsComponent implements OnInit, OnDestroy{
 
   data: any = [];
   loadedData: boolean = false;
+  loadedAllQuestionaires: boolean = false;
+  allQuestionnaires: any = [];
   questionnaires: any = [];
   actualQuestionnaire: any = {};
   changeQuestion: any = {};
@@ -36,8 +38,7 @@ export class PromsComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
     this.actuaGroup = this.authService.getGroup();
-    this.loadQuestionnaires();
-
+    this.loadQuestionnaires(false);
     this.subscription.add(this.raitoService.getProms().subscribe(
       data => {
         console.log(data);
@@ -47,12 +48,35 @@ export class PromsComponent implements OnInit, OnDestroy{
     ));
   }
 
-  loadQuestionnaires(){
+  getAllQuestionnaire() {
+    this.loadedAllQuestionaires = false;
+    this.allQuestionnaires = [];
+    this.subscription.add(this.raitoService.loadAllQuestionnaire().subscribe(
+      data => {
+        console.log(data);
+        this.allQuestionnaires = data;
+        for(var i=0;i<this.allQuestionnaires.length;i++){
+          for(var j=0;j<this.questionnaires.length;j++){
+            if(this.allQuestionnaires[i].id==this.questionnaires[j].id){
+              this.allQuestionnaires[i].installed = true;
+            }
+          }
+        }
+        console.log(this.allQuestionnaires);
+        this.loadedAllQuestionaires = true;
+      }
+    ));
+  }
+
+  loadQuestionnaires(loadAll){
     this.questionnaires = [];
     this.subscription.add(this.raitoService.getQuestionnairesGroup().subscribe(
       data => {
         if(data.questionnaires!='No data'){
           this.questionnaires = data.questionnaires;
+        }
+        if(loadAll){
+          this.getAllQuestionnaire();
         }
       }
     ));
@@ -66,10 +90,15 @@ export class PromsComponent implements OnInit, OnDestroy{
 
   addForm(contentModalForm){
     this.actualQuestionnaire = {
+      "resourceType": "Questionnaire",
       createdById:this.authService.getGroup(),
+      createdby: '',
       id:'',
       title:'',
-      items:[]
+      description: '',
+      items:[],
+      img:'',
+      rate:{avg:0, ids: []}
     };
     
     let ngbModalOptions: NgbModalOptions = {
@@ -118,14 +147,48 @@ export class PromsComponent implements OnInit, OnDestroy{
     console.log(questionnaire);
   }
 
-  deleteQuestionnaire(id){
-    var copy = [];
+  addQuestionnaire(id){
+    var info = {id:id}
+    this.subscription.add(this.raitoService.addlinkQuestionnaire(info).subscribe(
+      data => {
+        console.log(data);
+        if(data.message=='added'){
+          this.loadQuestionnaires(true);
+        }else{
+          Swal.fire('', data.message, "warning");
+        }
+      }
+    ));
+
+    /*var copy = [];
     for(var i=0;i<this.questionnaires.length;i++){
       if(this.questionnaires[i].id!=id){
         copy.push(this.questionnaires[i])
       }
     }
-    this.questionnaires=JSON.parse(JSON.stringify(copy))
+    this.questionnaires=JSON.parse(JSON.stringify(copy))*/
+  }
+
+  deleteQuestionnaire(id){
+    var info = {id:id}
+    this.subscription.add(this.raitoService.deletelinkQuestionnaire(info).subscribe(
+      data => {
+        console.log(data);
+        if(data.message=='removed'){
+          this.loadQuestionnaires(true);
+        }else{
+          Swal.fire('', data.message, "warning");
+        }
+      }
+    ));
+
+    /*var copy = [];
+    for(var i=0;i<this.questionnaires.length;i++){
+      if(this.questionnaires[i].id!=id){
+        copy.push(this.questionnaires[i])
+      }
+    }
+    this.questionnaires=JSON.parse(JSON.stringify(copy))*/
   }
   
 
@@ -205,10 +268,10 @@ export class PromsComponent implements OnInit, OnDestroy{
   }
 
   saveQuestionnaire(){
-    this.loadQuestionnaires();
-    this.closeModal();
+    /*this.loadQuestionnaires();
+    this.closeModal();*/
 
-    /*if(this.updatingQuestionnaire){
+    if(this.updatingQuestionnaire){
       this.subscription.add(this.raitoService.updateQuestionnaire(this.actualQuestionnaire).subscribe(
         data => {
           console.log(data);
@@ -217,7 +280,7 @@ export class PromsComponent implements OnInit, OnDestroy{
           }else if(data.message=='dont have permissions'){
             Swal.fire('', 'You dont have permissions', "warning");
           }else{
-            this.loadQuestionnaires();
+            this.loadQuestionnaires(false);
             this.closeModal();
           }
           
@@ -230,24 +293,53 @@ export class PromsComponent implements OnInit, OnDestroy{
           if(data.message=='already exists'){
             Swal.fire('The name already exists', 'Change the title please', "warning");
           }else{
-            this.loadQuestionnaires();
+            this.loadQuestionnaires(false);
             this.closeModal();
           }
           
         }
       ));
     }
-    */
+    
   }
 
   searchForm(contentModalSearch){
-    
+    this.getAllQuestionnaire();
     let ngbModalOptions: NgbModalOptions = {
       backdrop : 'static',
       keyboard : false,
-      windowClass: 'ModalClass-sm'// xl, lg, sm
+      windowClass: 'ModalClass-lg'// xl, lg, sm
     };
     this.modalReference = this.modalService.open(contentModalSearch, ngbModalOptions);
+  }
+
+  callevent(questionnaire, value){
+    if(questionnaire.installed){
+      console.log(this.authService.getGroup());
+      console.log(questionnaire);
+      console.log(value);
+      //mandar id del cuestionario y el value, y el grupo en la url
+      var info = {id: questionnaire.id, value: value};
+      this.subscription.add(this.raitoService.rateQuestionnaire(info).subscribe(
+        data => {
+          console.log(data);
+          if(data.message=='updated'){
+            this.getAllQuestionnaire();
+            Swal.fire('', 'Done', "success");
+          }else if(data.message=='dont exists'){
+            Swal.fire('The id dont exists', '', "warning");
+          }else if(data.message=='dont have permissions'){
+            Swal.fire('', 'You cannot vote on a questionnaire created by you.', "warning");
+          }else{
+            Swal.fire('', data.message, "warning");
+          }
+          
+        }
+      ));
+    }else{
+      Swal.fire('', "You can't vote if it's not installed.", "warning");
+    }
+    
   }
 
 }
