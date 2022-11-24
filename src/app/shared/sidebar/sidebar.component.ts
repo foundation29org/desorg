@@ -97,7 +97,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
         var tempUrl= (event.url).toString().split('?');
         var actualUrl = tempUrl[0];
         var tempUrl1 = (actualUrl).toString();
-        if(tempUrl1.indexOf('/admin/dashboard-admin')!=-1){
+        if(tempUrl1.indexOf('/admin/community')!=-1){
           this.isHomePage = true;
         }else{
           this.isHomePage = false;
