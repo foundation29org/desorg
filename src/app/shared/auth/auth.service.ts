@@ -53,7 +53,7 @@ export class AuthService {
         this.setRedirectUrl('/clinical/dashboard/home')
       }else if(tokenPayload.role == 'Admin'){
         // Admin
-        this.setRedirectUrl('/admin/dashboard-admin')
+        this.setRedirectUrl('/admin/community')
       }
       else{
         // is role user
@@ -91,7 +91,7 @@ export class AuthService {
       this.setRedirectUrl('/clinical/dashboard/home')
     }else if(tokenPayload.role == 'Admin'){
       // Admin
-      this.setRedirectUrl('/admin/dashboard-admin')
+      this.setRedirectUrl('/admin/community')
     }else{
       // is role user
       this.setRedirectUrl('/home')

@@ -6,54 +6,74 @@
 		<div class="card">
 			<div class="card-header">
 				<h4 class="card-title">{{'do.questionnaires' | translate }}
-					<span class="font-small-3 text-muted float-right">
+					<span class="text-muted float-right">
 						<span class="btn btn-outline-primary mr-1" style="text-transform: initial;" (click)="addForm(contentModalForm)">New</span>
 						<span class="btn btn-outline-primary ml-1" style="text-transform: initial;" (click)="searchForm(contentModalSearch)">Search</span>
 					</span>
-					<span class="d-block">
-						<span *ngFor="let questionnaire of questionnaires ; let i = index" class="font-small-3 text-muted">
-							<span class="d-block" style="text-transform: none;">{{questionnaire.id}} 
-								<span *ngIf="questionnaire.createdById==actuaGroup"  class="fa fa-edit primary mr-1 ml-1 pointer" (click)="editForm(questionnaire, contentModalForm)"></span>
-								<span class="fa fa-trash primary pointer" (click)="deleteForm(questionnaire)"></span>
+					<span class="d-block mt-3 mb-3">
+						<p *ngFor="let questionnaire of questionnaires ; let i = index" class="text-muted mb-2">
+							<span class="d-block" style="text-transform: none;">
+								<span class="mt-2">{{questionnaire.title}} </span>
+								<span class="mt-1 nav-item" ngbDropdown display="dynamic" placement="bottom-right">
+									<a class="position-relative colorlink" style="padding: 0rem 1rem;" id="dropdownPat{{i}}"
+										ngbDropdownToggle title="{{'generics.Options' | translate }}">
+										<i class="mt-1 fas fa-ellipsis-v secondary"></i>
+									</a>
+									<span ngbDropdownMenu aria-labelledby="dropdownPat{{i}}" class="dropdown">
+										<a class="dropdown-item py-1" href="javascript:;" (click)="seeResults(questionnaire)">
+											<span class="fa fa-eye primary pointer mr-1" style="width:20px"></span><span class="">{{'generics.View' | translate }}</span>
+										</a>
+										<a *ngIf="questionnaire.createdById==actuaGroup" class="dropdown-item py-1" href="javascript:;" (click)="editForm(questionnaire, contentModalForm)">
+											<span class="fa fa-edit primary pointer mr-1" style="width:20px"></span><span class="">{{'generics.Edit' | translate }}</span> 
+										</a>
+										<a class="dropdown-item py-1" href="javascript:;" (click)="deleteForm(questionnaire)">
+											<span class="fa fa-trash primary pointer mr-1" style="width:20px"></span><span class="">{{'generics.Delete' | translate }}</span> 
+										</a>
+									</span>
+								</span>
+								
+								<!--<span class="fa fa-eye primary pointer mr-1 ml-1" (click)="seeResults(questionnaire)"></span>
+								<span *ngIf="questionnaire.createdById==actuaGroup"  class="fa fa-edit primary pointer mr-1" (click)="editForm(questionnaire, contentModalForm)"></span>
+								<span class="fa fa-trash primary pointer" (click)="deleteForm(questionnaire)"></span>-->
 							</span>
 							<!--<span *ngIf="questionnaires.length>0 && (i>0) && (i<=questionnaires.length-1)">,</span>-->
-						</span>
+						</p>
 					</span>
 				</h4>
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-12 col-12" *ngIf="loadedData">
+	<div class="col-lg-12 col-12" *ngIf="showDetails">
 		<div class="card">
 			<div class="card-header">
-				<h5 class="card-title">{{'do.Answers' | translate }}</h5>
+				<h5 class="card-title">{{'do.Answers' | translate }} of {{actualQuestionnaire.title}} </h5>
+				<p>{{actualQuestionnaire.description}}</p>
 			</div>
-			<div class="card-body table-responsive" *ngIf="data.length >0">
-				<table class="table text-center">
+			<div class="card-body table-responsive" *ngIf="actualQuestionnaire.items.length >0">
+				<table class="table">
 					<thead>
 						<tr>
-							<th>{{'do.Questionnaire' | translate }}</th>
-							<th>{{'do.Patient' | translate }}</th>
-							<th>{{'do.Date' | translate }}</th>
-							<th style="width: 50%;">{{'do.Info' | translate }}</th>
+							<th>Id</th>
+							<th>Questions</th>
+							<th>Answers</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr *ngFor="let element of data ; let i = index">
-							<td>{{element.resource.id}}</td>
-							<td>{{element.resource.subject.display}}</td>
-							<td>{{element.resource.authored|date}}</td>
+						<tr *ngFor="let element of actualQuestionnaire.items ; let i = index">
+							<td>{{element.idProm}}</td>
+							<td style="width: 30%;">{{element.text}}</td>
 							<td>
-								<p *ngFor="let item of element.resource.item ; let j = index">
-									<span class="d-block"><strong>{{item.text}}</strong></span>
-									{{item.answer[0].valueString}}
+								<p *ngFor="let item of element.answers ; let j = index">
+									<span class="d-block">{{item.text}}</span>
+									<span *ngIf="item.count"><strong>{{(item.count /max)*100 | number : '1.0-2'}}%</strong></span>
+									<span *ngIf="!item.count"><strong>0%</strong></span>
 								</p>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
-			<div class="card-body" *ngIf="data.length == 0">
+			<div class="card-body" *ngIf="actualQuestionnaire.items.length == 0">
 				{{'do.No data' | translate }}
 			</div>
 		</div>
@@ -74,7 +94,7 @@
 	  </div>
 	</div>
 	  <div class="content-wrapper" *ngIf="!showPanelNew">
-		<fieldset>
+		<!--<fieldset>
 			<div class="row mt-3">
 			  <div class="col-md-12">
 				<div class="form-group">
@@ -84,7 +104,7 @@
 				</div>
 			  </div>
 			</div>
-		  </fieldset>
+		  </fieldset>-->
 		<fieldset>
 			<div class="row mt-3">
 			  <div class="col-md-12">
@@ -92,6 +112,28 @@
 				  <label for="title">{{'do.Title' | translate }}</label>
 				  <input type="text" id="title" class="form-control"  name="title" [(ngModel)]="actualQuestionnaire.title" required #title="ngModel">
 				  <small class="form-text title-muted danger" *ngIf="!title.valid && (title.dirty || title.touched)">{{'generics.required' | translate }}</small>
+				</div>
+			  </div>
+			</div>
+		  </fieldset>
+		  <fieldset>
+			<div class="row mt-2">
+			  <div class="col-md-12">
+				<div class="form-group">
+				  <label for="description">Description</label>
+				  <input type="text" id="description" class="form-control"  name="description" [(ngModel)]="actualQuestionnaire.description" required #description="ngModel">
+				  <small class="form-text title-muted danger" *ngIf="!description.valid && (description.dirty || description.touched)">{{'generics.required' | translate }}</small>
+				</div>
+			  </div>
+			</div>
+		  </fieldset>
+		  <fieldset>
+			<div class="row mt-2">
+			  <div class="col-md-12">
+				<div class="form-group">
+				  <label for="img">Image url. Ex: https://dravet.eu/logo.png</label>
+				  <input type="text" id="img" class="form-control"  name="img" [(ngModel)]="actualQuestionnaire.img" required #img="ngModel">
+				  <small class="form-text title-muted danger" *ngIf="!img.valid && (img.dirty || img.touched)">{{'generics.required' | translate }}</small>
 				</div>
 			  </div>
 			</div>
@@ -210,7 +252,7 @@
 	  </button>
 	  <div>
 		<h4 class="mb-0">
-			Questionnaires store <span class="btn btn-outline-primary btn-sm ml-1 mb-0" style="text-transform: initial;" (click)="closeModal();addForm(contentModalForm)">New</span>
+			Questionnaires repository <span class="btn btn-outline-primary btn-sm ml-1 mb-0" style="text-transform: initial;" (click)="closeModal();addForm(contentModalForm)">New</span>
 		</h4>
 	  </div>
 	</div>
@@ -231,7 +273,7 @@
 					<span *ngIf="questionnaire.installed" class="badge badge-info">Installed</span>
 					<span *ngIf="!questionnaire.installed" class="badge badge-dark pointer" (click)="addQuestionnaire(questionnaire.id)">Install</span>
 					<div class="star">
-						<ngb-rating [max]="5" [(rate)]="questionnaire.data.rate.avg" title="{{questionnaire.data.rate.avg}} " [readonly]="false" (rateChange)="callevent(questionnaire, questionnaire.data.rate.avg)"></ngb-rating>
+						<ngb-rating [max]="5" [(rate)]="questionnaire.data.rate.avg" title="{{questionnaire.data.rate.avg | number : '1.0-2'}} " [readonly]="false" (rateChange)="callevent(questionnaire, questionnaire.data.rate.avg)"></ngb-rating>
 						<span>({{questionnaire.data.rate.ids.length}})</span>
 					</div>
                 </div>

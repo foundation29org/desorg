@@ -22,6 +22,8 @@ export class PromsComponent implements OnInit, OnDestroy{
   loadedAllQuestionaires: boolean = false;
   allQuestionnaires: any = [];
   questionnaires: any = [];
+  resultsQuestionnaire: any = [];
+  showDetails: boolean = false;
   actualQuestionnaire: any = {};
   changeQuestion: any = {};
   modalReference: NgbModalRef;
@@ -30,6 +32,8 @@ export class PromsComponent implements OnInit, OnDestroy{
   updatingQuestionnaire: boolean = false;
   actuaGroup: string = '';
   @ViewChild('f') NewForm: NgForm;
+  groupName: string= '';
+  max: number = -1;
   private subscription: Subscription = new Subscription();
 
   constructor(public translate: TranslateService, private raitoService: RaitoService, private modalService: NgbModal, private searchService: SearchService, private authService: AuthService){
@@ -46,6 +50,21 @@ export class PromsComponent implements OnInit, OnDestroy{
         this.loadedData = true;
       }
     ));
+    this.loadGroups();
+  }
+
+  loadGroups() {
+    this.subscription.add( this.raitoService.loadGroups()
+    .subscribe( (res : any) => {
+        console.log(res);
+        for (var i = 0; i < res.length; i++) {
+          if(this.actuaGroup==res[i]._id){
+            this.groupName = res[i].name;
+          }
+        }
+      }, (err) => {
+        console.log(err);
+      }));
   }
 
   getAllQuestionnaire() {
@@ -74,6 +93,7 @@ export class PromsComponent implements OnInit, OnDestroy{
       data => {
         if(data.questionnaires!='No data'){
           this.questionnaires = data.questionnaires;
+          console.log(this.questionnaires)
         }
         if(loadAll){
           this.getAllQuestionnaire();
@@ -92,7 +112,7 @@ export class PromsComponent implements OnInit, OnDestroy{
     this.actualQuestionnaire = {
       "resourceType": "Questionnaire",
       createdById:this.authService.getGroup(),
-      createdby: '',
+      createdby: this.groupName,
       id:'',
       title:'',
       description: '',
@@ -340,6 +360,61 @@ export class PromsComponent implements OnInit, OnDestroy{
       Swal.fire('', "You can't vote if it's not installed.", "warning");
     }
     
+  }
+
+  seeResults(questionnaire){
+    console.log(questionnaire)
+    this.actualQuestionnaire = questionnaire;
+    var tempresultsQuestionnaire = [];
+    for (var i = 0; i < this.data.length; i++) {
+      if(this.data[i].resource.id == questionnaire.id){
+        tempresultsQuestionnaire.push(this.data[i])
+      }
+    }
+    console.log(tempresultsQuestionnaire);
+    var distintQuestionnaires = [];
+    for (var i = 0; i < tempresultsQuestionnaire.length; i++) {
+      for (var j = 0; j < tempresultsQuestionnaire[i].resource.item.length; j++) {
+        var foundElementIndex = this.searchService.searchIndex(distintQuestionnaires, 'linkId', tempresultsQuestionnaire[i].resource.item[j].linkId);
+        if(foundElementIndex==-1){
+          distintQuestionnaires.push({linkId:tempresultsQuestionnaire[i].resource.item[j].linkId, answers:[{value:tempresultsQuestionnaire[i].resource.item[j].answer[0].valueString, count:1}]})
+        }else{
+          var foundElementIndex2 = this.searchService.searchIndex(distintQuestionnaires[foundElementIndex].answers, 'value', tempresultsQuestionnaire[i].resource.item[j].answer[0].valueString);
+          if(foundElementIndex2==-1){
+            distintQuestionnaires[foundElementIndex].answers.push({value:tempresultsQuestionnaire[i].resource.item[j].answer[0].valueString, count:1})
+          }else{
+            distintQuestionnaires[foundElementIndex].answers[foundElementIndex2].count++;
+          }
+          
+        }
+      }
+    }
+
+    console.log(distintQuestionnaires)
+
+    this.max = -1;
+    for (var i = 0; i < this.actualQuestionnaire.items.length; i++) {
+      for (var j = 0; j < distintQuestionnaires.length; j++) {
+        if(this.actualQuestionnaire.items[i].idProm==distintQuestionnaires[j].linkId){
+          for (var k = 0; k < this.actualQuestionnaire.items[i].answers.length; k++) {
+            for (var li = 0; li < distintQuestionnaires[j].answers.length; li++) {
+              if(this.actualQuestionnaire.items[i].answers[k].value == distintQuestionnaires[j].answers[li].value){
+                this.actualQuestionnaire.items[i].answers[k].count = distintQuestionnaires[j].answers[li].count;
+                if(this.max<distintQuestionnaires[j].answers[li].count){
+                  this.max =distintQuestionnaires[j].answers[li].count;
+                }
+              }
+            }
+          }
+          //this.actualQuestionnaire.items[i].stats = distintQuestionnaires[j].answers;
+        }
+      }
+    }
+    console.log(this.actualQuestionnaire );
+    /*this.resultsQuestionnaire = [];
+    this.questionnaires*/
+    
+    this.showDetails = true;
   }
 
 }
