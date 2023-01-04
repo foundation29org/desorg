@@ -64,6 +64,7 @@ export class CommunityComponent implements OnInit, OnDestroy{
    dataGroup: any;
   drugsLang: any;
   rangeDate: string = 'month';
+  groupBy: string = 'Months';
   minDateRange = new Date();
   xAxisTicks = [];
   loadedFeels: boolean = false;
@@ -184,6 +185,22 @@ rangeResourcesDateDefault={
       "id":""
   }
 }
+
+meses: any = 
+[
+  {id: 1, es: 'Enero', en: 'January'},
+  {id: 2, es: 'Febrero', en: 'February'},
+  {id: 3, es: 'Marzo', en: 'March'},
+  {id: 4, es: 'Abril', en: 'April'},
+  {id: 5, es: 'Mayo', en: 'May'},
+  {id: 6, es: 'Junio', en: 'June'},
+  {id: 7, es: 'Julio', en: 'July'},
+  {id: 8, es: 'Agosto', en: 'August'},
+  {id: 9, es: 'Septiembre', en: 'September'},
+  {id: 10, es: 'Octubre', en: 'October'},
+  {id: 11, es: 'Noviembre', en: 'November'},
+  {id: 12, es: 'Diciembre', en: 'December'}
+];
   
   constructor(public translate: TranslateService, private raitoService: RaitoService, private dateService: DateService, private modalService: NgbModal, private apif29BioService: Apif29BioService, private adapter: DateAdapter<any>, private sortService: SortService,  private searchService: SearchService, public jsPDFService: jsPDFService, private apiDx29ServerService: ApiDx29ServerService){
 
@@ -631,6 +648,11 @@ loadTranslationsElements() {
     this.loadData();
   }
 
+  changeGroupBy(groupBy) {
+    this.groupBy = groupBy;
+    this.loadDataRangeDate(this.rangeDate);
+  }
+
   loadData() {
     //cargar los datos del usuario
     this.loadedFeels = false;
@@ -964,7 +986,11 @@ loadTranslationsElements() {
     for (var i=0; i < seizures.length; i++)
     {
       var varweek = new Date(seizures[i].stringDate)
-      seizures[i].name = this.getWeek(varweek, 1);
+      if(this.groupBy=='Weeks'){
+        seizures[i].name = this.getWeek(varweek, 1);
+      }else{
+        seizures[i].name = this.getMonthLetter(varweek, 1);
+      }
     }
     var copyseizures = JSON.parse(JSON.stringify(seizures));
     for (var i=0; i < copyseizures.length; i++){
@@ -988,6 +1014,14 @@ loadTranslationsElements() {
     return respseizures;
   }
   
+  getMonthLetter(newdate, dowOffset?){
+    if (this.lang != 'es') {
+      return this.meses[newdate.getMonth()].en
+  } else {
+      return this.meses[newdate.getMonth()].es
+  }
+  }
+
   getWeek(newdate, dowOffset?) {
   /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com */
   

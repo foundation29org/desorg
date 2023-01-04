@@ -14,7 +14,7 @@
 						<p *ngFor="let questionnaire of questionnaires ; let i = index" class="text-muted mb-2">
 							<span class="d-block" style="text-transform: none;">
 								<span class="mt-2">{{questionnaire.title}} </span>
-								<span class="mt-1 nav-item" ngbDropdown display="dynamic" placement="bottom-right">
+								<span class="mt-1 nav-item" ngbDropdown display="dynamic" placement="right">
 									<a class="position-relative colorlink" style="padding: 0rem 1rem;" id="dropdownPat{{i}}"
 										ngbDropdownToggle title="{{'generics.Options' | translate }}">
 										<i class="mt-1 fas fa-ellipsis-v secondary"></i>
@@ -65,7 +65,7 @@
 							<td>
 								<p *ngFor="let item of element.answers ; let j = index">
 									<span class="d-block">{{item.text}}</span>
-									<span *ngIf="item.count"><strong>{{(item.count /max)*100 | number : '1.0-2'}}%</strong></span>
+									<span *ngIf="item.count"><strong>{{(item.count /max)*100 | number : '1.0-2'}}%</strong> ({{item.count}}-{{max}})</span>
 									<span *ngIf="!item.count"><strong>0%</strong></span>
 								</p>
 							</td>
