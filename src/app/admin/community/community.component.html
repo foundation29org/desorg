@@ -613,7 +613,7 @@
 										</div>
 										<div id="line-chart2">
 										  <div class="height-100">
-											<ngx-charts-line-chart [scheme]="lineChartColorScheme"
+											<ngx-charts-line-chart [scheme]="lineChartOneColorScheme"
 												[results]="lineChartHeight" [gradient]="barChartGradient"
 												[xAxis]="false" [yAxis]="true"
 												[legend]="barChartShowLegend"
@@ -793,7 +793,8 @@
 												<combo-chart-component
 												[view]="[(ContainerRef1.offsetWidth-90), 100]"
 												[scheme]="comboBarScheme"
-												[colorSchemeLine]="lineChartScheme"
+												[colorSchemeLine]="colors"
+												[colorsLineToll]="colorsLineToll"
 												[results]="barChart"
 												[animations]="animations"
 												[lineChart]="lineChartSeries"
@@ -829,7 +830,7 @@
 																class="chart-legend" 
 																[data]="chartNames" 
 																[title]="'Legend Title'" 
-																[colors]="colors2">
+																[colors]="colors">
 											  </ngx-charts-legend>
 											  <div class="">
 												<ngx-charts-legend fxFlex="100%" 

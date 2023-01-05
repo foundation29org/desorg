@@ -27,7 +27,7 @@ export class SeizuresComponent implements OnInit, OnDestroy{
   lineChart = [];
   public chartNames: string[];
   public colors: ColorHelper;
-  lineChartColorScheme = chartsData.lineChartColorScheme;
+  lineChartColorScheme = chartsData.lineChartOneColorScheme;
   barChartGradient = chartsData.barChartGradient;
   barChartXAxisLabel = chartsData.barChartXAxisLabel;
   barChartYAxisLabel = chartsData.barChartYAxisLabel;
