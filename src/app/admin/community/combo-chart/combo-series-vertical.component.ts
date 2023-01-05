@@ -116,7 +116,7 @@ import {
           x: 0,
           y: 0
         };
-        bar.width= '10';
+        
         if (this.type === 'standard') {
           bar.height = Math.abs(this.yScale(value) - this.yScale(0));
           bar.x = this.xScale(label);
