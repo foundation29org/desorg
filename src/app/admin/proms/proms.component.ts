@@ -34,6 +34,7 @@ export class PromsComponent implements OnInit, OnDestroy{
   @ViewChild('f') NewForm: NgForm;
   groupName: string= '';
   max: number = -1;
+  detailPatients: any = [];
   private subscription: Subscription = new Subscription();
 
   constructor(public translate: TranslateService, private raitoService: RaitoService, private modalService: NgbModal, private searchService: SearchService, private authService: AuthService){
@@ -115,6 +116,7 @@ export class PromsComponent implements OnInit, OnDestroy{
       createdby: this.groupName,
       id:'',
       title:'',
+      periodicity: null,
       description: '',
       items:[],
       img:'',
@@ -372,6 +374,32 @@ export class PromsComponent implements OnInit, OnDestroy{
       }
     }
     console.log(tempresultsQuestionnaire);
+    //for each resource.subject.reference, calcular la puntuacion 
+    this.detailPatients = [];
+    for (var i = 0; i < tempresultsQuestionnaire.length; i++) {
+      if(tempresultsQuestionnaire[i].resource.id=='a8ddd6de-e566-4211-b4db-b53ef4625833lia9dxyz'){
+        var points = 0;
+        for(var j=0;j<tempresultsQuestionnaire[i].resource.item.length;j++){
+          var valu = tempresultsQuestionnaire[i].resource.item[j].answer[0].valueString;
+          if(valu=='Raramente'){
+            points = points + 1;
+          }else if(valu=='A veces'){
+            points = points + 2;
+          }else if(valu=='A menudo'){
+            points = points + 3;
+          }else if(valu=='Siempre'){
+            points = points + 4;
+          }
+        }
+        var foundElementIndex = this.searchService.searchIndex(this.resultsQuestionnaire, 'id', tempresultsQuestionnaire[i].resource.subject.reference);
+        if(foundElementIndex==-1){
+          this.detailPatients.push({id:tempresultsQuestionnaire[i].resource.subject.reference, questionnaires: [{id:tempresultsQuestionnaire[i].resource.id, points:points, date:tempresultsQuestionnaire[i].resource.authored}]});
+        }else{
+          this.detailPatients[foundElementIndex].questionnaires.push({id:tempresultsQuestionnaire[i].resource.id, points:points, date:tempresultsQuestionnaire[i].resource.authored});
+        }
+      }
+    }
+
     var distintQuestionnaires = [];
     for (var i = 0; i < tempresultsQuestionnaire.length; i++) {
       for (var j = 0; j < tempresultsQuestionnaire[i].resource.item.length; j++) {
@@ -398,8 +426,21 @@ export class PromsComponent implements OnInit, OnDestroy{
         if(this.actualQuestionnaire.items[i].idProm==distintQuestionnaires[j].linkId){
           for (var k = 0; k < this.actualQuestionnaire.items[i].answers.length; k++) {
             for (var li = 0; li < distintQuestionnaires[j].answers.length; li++) {
+              //if distintQuestionnaires[j].answers[li].value contains Other:, replace value with Other
+              if(distintQuestionnaires[j].answers[li].value.indexOf('Other:')!=-1){
+                distintQuestionnaires[j].answers[li].otherfield = [];
+                //delete Other:
+                let tempotherfield = distintQuestionnaires[j].answers[li].value.substring(6);
+                distintQuestionnaires[j].answers[li].otherfield.push(tempotherfield);
+                distintQuestionnaires[j].answers[li].value = 'Other';
+
+              }
               if(this.actualQuestionnaire.items[i].answers[k].value == distintQuestionnaires[j].answers[li].value){
                 this.actualQuestionnaire.items[i].answers[k].count = distintQuestionnaires[j].answers[li].count;
+                if(distintQuestionnaires[j].answers[li].otherfield){
+                  this.actualQuestionnaire.items[i].answers[k].otherfield = distintQuestionnaires[j].answers[li].otherfield;
+                }
+                
                 if(this.max<distintQuestionnaires[j].answers[li].count){
                   this.max =distintQuestionnaires[j].answers[li].count;
                 }
