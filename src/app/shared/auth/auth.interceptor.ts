@@ -73,7 +73,7 @@ export class AuthInterceptor implements HttpInterceptor {
       authReq = req.clone({ headers });
     }
 
-    if (req.url.indexOf('/person') !== -1) {
+    if (req.url.indexOf('/person') !== -1 || req.url.indexOf('/assets/') !== -1) {
       isExternalReq = true;
       authReq = req.clone();
     }
