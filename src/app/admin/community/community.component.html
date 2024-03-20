@@ -7,7 +7,7 @@
 			<div class="card-header">
 				<h4 class="card-title">{{'do.community' | translate }}</h4>
 			</div>
-			<div class="card-body table-responsive">
+			<div class="card-body table-responsive" *ngIf="patients.length>0">
 				<table class="table">
 					<thead>
 						<tr>
@@ -82,6 +82,10 @@
 				</table>
 				<div class="d-none"><span id="content"></span></div>
 			</div>
+			<div class="card-body" *ngIf="patients.length==0">
+				<div class="center-elements">
+					<h4 class="text-center">{{'generics.No data' | translate }}</h4>
+				</div>
 		</div>
 	</div>
 </div>

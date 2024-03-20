@@ -47,42 +47,60 @@ export class SeizuresComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.subscription.add(this.raitoService.getSeizures().subscribe(
       data => {
-        this.data = data.entry;
+        console.log(data)
         this.loadedData = true;
-        this.subscription.add(this.raitoService.getOnlyPatients(false).subscribe(
-          data2 => {
-            this.patients = data2;
-            for (var index in this.patients) {
-                for(var i=0;i<this.data.length;i++){
-                  if(this.data[i].resource.subject.reference==this.patients[index].result.entry[0].fullUrl){
-                    this.data[i].resource.country = this.patients[index].result.entry[0].resource.address[0].country;
-                    if(this.data[i].resource.country==null){
-                      this.data[i].resource.country ='Unknown'
-                    }
-                    var foundElementIndex = this.searchService.searchIndex(this.countries, 'name', this.data[i].resource.country);
-                    if(foundElementIndex==-1){
-                      var users = []
-                      users.push({id: this.patients[index].result.entry[0].fullUrl})
-                      this.countries.push({name:this.data[i].resource.country, count:1, users: users})
-                      this.totalPatients++;
-                    }else{
-                      var foundElementIndex2 = this.searchService.searchIndex(this.countries[foundElementIndex].users, 'id', this.patients[index].result.entry[0].fullUrl);
-                      if(foundElementIndex2==-1){
-                        this.countries[foundElementIndex].count++;
-                        this.countries[foundElementIndex].users.push({id:this.patients[index].result.entry[0].fullUrl})
+        if(data == 'No data'){
+          this.data = [];
+          return;
+        }else{
+          this.data = data.entry;
+          this.subscription.add(this.raitoService.getOnlyPatients(false).subscribe(
+            data2 => {
+              this.patients = data2;
+              for (var index in this.patients) {
+                  for(var i=0;i<this.data.length;i++){
+                    if(this.data[i].resource.subject.reference==this.patients[index].result.entry[0].fullUrl){
+                      this.data[i].resource.country = this.patients[index].result.entry[0].resource.address[0].country;
+                      if(this.data[i].resource.country==null){
+                        this.data[i].resource.country ='Unknown'
+                      }
+                      var foundElementIndex = this.searchService.searchIndex(this.countries, 'name', this.data[i].resource.country);
+                      if(foundElementIndex==-1){
+                        var users = []
+                        users.push({id: this.patients[index].result.entry[0].fullUrl})
+                        this.countries.push({name:this.data[i].resource.country, count:1, users: users})
                         this.totalPatients++;
+                      }else{
+                        var foundElementIndex2 = this.searchService.searchIndex(this.countries[foundElementIndex].users, 'id', this.patients[index].result.entry[0].fullUrl);
+                        if(foundElementIndex2==-1){
+                          this.countries[foundElementIndex].count++;
+                          this.countries[foundElementIndex].users.push({id:this.patients[index].result.entry[0].fullUrl})
+                          this.totalPatients++;
+                        }
                       }
                     }
                   }
-                }
+              }
+              this.dataCopy = JSON.parse(JSON.stringify(this.data));
+              for (var indexCountry in this.countries) {
+                this.countriesSelected.push(this.countries[indexCountry].name);
+              }
+              this.getDataGraph();
             }
-            this.dataCopy = JSON.parse(JSON.stringify(this.data));
-            for (var indexCountry in this.countries) {
-              this.countriesSelected.push(this.countries[indexCountry].name);
-            }
-            this.getDataGraph();
-          }
-        ));
+          ));
+        }
+        
+      },
+      error => {
+        this.data = [];
+        this.loadedData = true;
+        // Manejo de errores HTTP
+        console.error('Error HTTP:', error);
+        // Puedes agregar lógica adicional aquí, como mostrar un mensaje de error al usuario
+        if (error.status === 404) {
+          console.error('No se encontró el recurso solicitado');
+          // Puedes agregar lógica adicional aquí, como mostrar un mensaje de error al usuario
+        }
       }
     ));
   }
