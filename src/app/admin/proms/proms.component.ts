@@ -46,8 +46,11 @@ export class PromsComponent implements OnInit, OnDestroy{
     this.loadQuestionnaires(false);
     this.subscription.add(this.raitoService.getProms().subscribe(
       data => {
-        console.log(data);
-        this.data = data.entry;
+        if(data.message){
+          this.data = [];
+        }else{
+          this.data = data.entry;
+        }
         this.loadedData = true;
       }
     ));

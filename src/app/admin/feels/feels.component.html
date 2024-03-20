@@ -2,7 +2,7 @@
     <div  class="col-md-12 center-elements mt-3" *ngIf="!loadedData">
         <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
       </div>
-	<div class="col-lg-12 col-12 mt-3" *ngIf="loadedData">
+	<div class="col-lg-12 col-12 mt-3" *ngIf="loadedData && data.length>0">
 		Total Patients: {{totalPatients}}
 		<p class="mb-0 mt-3">
 			<mat-checkbox [(ngModel)]="allSelected" (change)="allChanged()">Select/Deselect All</mat-checkbox>
@@ -82,5 +82,10 @@
 			</div>
 		</div>
 	
+	</div>
+	<div class="col-lg-12 col-12" *ngIf="loadedData && data.length==0">
+		<p class="mt-3">
+			{{'generics.No data' | translate }}
+		</p>
 	</div>
 </div>

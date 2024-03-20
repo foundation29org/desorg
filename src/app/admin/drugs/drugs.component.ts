@@ -58,6 +58,17 @@ export class DrugsComponent implements OnInit, OnDestroy{
         this.data = data.entry;
         this.loadedData = true;
         this.getCountriesAndDraw()
+      },
+      error => {
+        this.data = [];
+        this.loadedData = true;
+        // Manejo de errores HTTP
+        console.error('Error HTTP:', error);
+        // Puedes agregar lógica adicional aquí, como mostrar un mensaje de error al usuario
+        if (error.status === 404) {
+          console.error('No se encontró el recurso solicitado');
+          // Puedes agregar lógica adicional aquí, como mostrar un mensaje de error al usuario
+        }
       }
     ));
   }

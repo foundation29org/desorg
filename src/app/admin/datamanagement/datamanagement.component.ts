@@ -4,6 +4,7 @@ import { RaitoService } from 'app/shared/services/raito.service';
 import { Subscription } from 'rxjs/Subscription';
 import { DateService } from 'app/shared/services/date.service';
 import { json2csv } from 'json-2-csv';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-datamanagement',
@@ -20,7 +21,7 @@ export class DataManagementComponent implements OnInit{
   private subscription: Subscription = new Subscription();
   private msgDownload: string;
 
-  constructor(public translate: TranslateService, private raitoService: RaitoService, private dateService: DateService){
+  constructor(public translate: TranslateService, private raitoService: RaitoService, private dateService: DateService, public toastr: ToastrService){
 
   }
 
@@ -56,6 +57,7 @@ export class DataManagementComponent implements OnInit{
           this.loadedData = false;
      }, (err) => {
        console.log(err);
+       this.toastr.info('No data');
        this.loadedData = false;
      }));
   }
@@ -108,6 +110,7 @@ export class DataManagementComponent implements OnInit{
       
      }, (err) => {
        console.log(err);
+       this.toastr.info('No data');
        this.loadedData2 = false;
      }));
   }
